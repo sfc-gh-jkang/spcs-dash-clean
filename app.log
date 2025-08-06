@@ -1,0 +1,43 @@
+2025-08-06 19:08:33,686 EDT -0400 - __main__ - INFO - Starting Snowflake Dash Application on port 8000
+2025-08-06 19:08:33,686 EDT -0400 - dash.dash - INFO - Dash is running on http://0.0.0.0:8000/
+
+2025-08-06 19:08:39,651 EDT -0400 - __main__ - INFO - Starting Snowflake Dash Application on port 8000
+2025-08-06 19:08:41,722 EDT -0400 - __main__ - INFO - Loading Snowflake table data for AG Grid
+2025-08-06 19:08:41,723 EDT -0400 - __main__ - INFO - Detected local environment - using credential authentication
+2025-08-06 19:08:41,773 EDT -0400 - snowflake.connector.connection - INFO - Snowflake Connector for Python Version: 3.16.0, Python Version: 3.13.5, Platform: macOS-15.6-arm64-arm-64bit-Mach-O
+2025-08-06 19:08:41,774 EDT -0400 - snowflake.connector.connection - INFO - Connecting to GLOBAL Snowflake domain
+2025-08-06 19:08:42,722 EDT -0400 - snowflake.snowpark.session - INFO - Snowpark Session information: 
+"version" : 1.35.0,
+"python.version" : 3.13.5,
+"python.connector.version" : 3.16.0,
+"python.connector.session.id" : 3689939571087574,
+"os.name" : Darwin
+
+2025-08-06 19:08:42,722 EDT -0400 - __main__ - INFO - Successfully connected to Snowflake locally
+2025-08-06 19:08:45,124 EDT -0400 - __main__ - INFO - Successfully retrieved 8 tables/views from Snowflake schema
+2025-08-06 19:08:45,124 EDT -0400 - snowflake.snowpark.session - INFO - Closing session: 3689939571087574
+2025-08-06 19:08:45,125 EDT -0400 - snowflake.snowpark.session - INFO - Canceling all running queries
+2025-08-06 19:08:45,700 EDT -0400 - snowflake.snowpark.session - INFO - Closed session: 3689939571087574
+2025-08-06 19:08:45,700 EDT -0400 - __main__ - INFO - Successfully loaded 8 rows for AG Grid
+2025-08-06 19:08:52,313 EDT -0400 - snowflake.snowpark.session - INFO - Closed session: 3689939571087574
+2025-08-06 23:11:37,126 UTC +0000 - __main__ - INFO - Starting Snowflake Dash Application on port 8000
+2025-08-06 23:11:37,129 UTC +0000 - dash.dash - INFO - Dash is running on http://0.0.0.0:8000/
+
+2025-08-06 23:11:39,607 UTC +0000 - __main__ - INFO - Starting Snowflake Dash Application on port 8000
+2025-08-06 23:23:50,037 UTC +0000 - __main__ - INFO - Loading Snowflake table data for AG Grid
+2025-08-06 23:23:50,042 UTC +0000 - __main__ - INFO - Detected local environment - using credential authentication
+2025-08-06 23:23:50,051 UTC +0000 - snowflake.connector.connection - INFO - Snowflake Connector for Python Version: 3.16.0, Python Version: 3.13.5, Platform: Linux-6.10.14-linuxkit-x86_64-with-glibc2.36
+2025-08-06 23:23:50,056 UTC +0000 - snowflake.connector.connection - INFO - Connecting to GLOBAL Snowflake domain
+2025-08-06 23:23:51,805 UTC +0000 - snowflake.snowpark.session - INFO - Snowpark Session information: 
+"version" : 1.35.0,
+"python.version" : 3.13.5,
+"python.connector.version" : 3.16.0,
+"python.connector.session.id" : 3689939571118254,
+"os.name" : Linux
+
+2025-08-06 23:23:51,807 UTC +0000 - __main__ - INFO - Successfully connected to Snowflake locally
+2025-08-06 23:23:53,335 UTC +0000 - __main__ - INFO - Successfully retrieved 8 tables/views from Snowflake schema
+2025-08-06 23:23:53,335 UTC +0000 - snowflake.snowpark.session - INFO - Closing session: 3689939571118254
+2025-08-06 23:23:53,336 UTC +0000 - snowflake.snowpark.session - INFO - Canceling all running queries
+2025-08-06 23:23:53,911 UTC +0000 - snowflake.snowpark.session - INFO - Closed session: 3689939571118254
+2025-08-06 23:23:53,920 UTC +0000 - __main__ - INFO - Successfully loaded 8 rows for AG Grid
