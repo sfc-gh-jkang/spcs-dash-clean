@@ -1,0 +1,58 @@
+# This compose file is for LOCAL DEVELOPMENT ONLY
+# .env file credentials are used for local development
+# In Snowpark Container Services, authentication is handled automatically
+# Create .env file from env.template: cp env.template .env
+services:
+  spcs-dash-app:
+    platform: linux/amd64
+    build: .
+    image: spcs-dash-app:latest
+    container_name: spcs-dash-app
+    ports:
+      # Standard port mapping for container deployment
+      - "8000:8000"
+    env_file:
+      - .env  # Loads all variables from .env file
+    environment:
+      # Snowflake configuration (loaded from .env file)
+      - SNOWFLAKE_ACCOUNT
+      - SNOWFLAKE_USER  
+      - SNOWFLAKE_PASSWORD
+      - SNOWFLAKE_WAREHOUSE
+      - SNOWFLAKE_DATABASE
+      - SNOWFLAKE_SCHEMA
+      
+      # Python/Dash configuration
+      - PYTHONUNBUFFERED=1
+      - DASH_DEBUG
+    
+    # For development: mount source code to enable live reloading
+    # Comment out for production
+    volumes:
+      - .:/app
+      - /app/.venv  # Exclude virtual environment from bind mount
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Health check - using dedicated health endpoint
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Network configuration
+    networks:
+      - levelup-network
+
+# Optional: Define custom network
+networks:
+  levelup-network:
+    driver: bridge
+
+# Optional: Define volumes for persistent data
+volumes:
+  uv-cache:
+    driver: local 

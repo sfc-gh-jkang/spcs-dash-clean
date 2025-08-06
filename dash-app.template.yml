@@ -1,0 +1,10 @@
+spec:
+  containers:
+    - name: dash-app
+      image: <YOUR_ACCOUNT>.registry.snowflakecomputing.com/fullstack_db/devops/images/dash_app:latest
+      env:
+        SNOWFLAKE_WAREHOUSE: <YOUR_WAREHOUSE>
+  endpoints:
+    - name: app
+      port: 8000
+      public: true
