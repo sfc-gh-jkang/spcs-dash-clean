@@ -4,14 +4,20 @@
 
 A modern Dash application designed for deployment to **Snowflake Container Services (SPCS)** with full local development support. Features interactive data visualization, Snowflake integration, and a responsive UI with dark/light mode support.
 
-🔗 **Repository**: https://github.com/sfc-gh-jkang/spcs-dash
+**Key capabilities:**
+
+- Run on SPCS
+- Connects to local Snowflake account accessible data
+- External access integrations to external styles and icons
+
+🔗 **Repository**: https://github.com/sfc-gh-jkang/spcs-dash-clean
 
 ## ⚡ Quick Start (5 minutes)
 
 Want to try the app immediately?
 
-1. `git clone https://github.com/sfc-gh-jkang/spcs-dash.git`
-2. `cd spcs-dash && cp env.template .env`
+1. `git clone https://github.com/sfc-gh-jkang/spcs-dash-clean.git`
+2. `cd spcs-dash-clean && cp env.template .env`
 3. Edit `.env` with your Snowflake credentials
 4. `docker-compose up --build` or 'uv run app.py' to run without the docker overhead
 5. Visit http://localhost:8000
@@ -70,8 +76,8 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 ### 2. Clone and Setup
 
 ```bash
-git clone https://github.com/sfc-gh-jkang/spcs-dash.git
-cd spcs-dash
+git clone https://github.com/sfc-gh-jkang/spcs-dash-clean.git
+cd spcs-dash-clean
 
 # Create virtual environment
 uv venv
@@ -228,7 +234,8 @@ CREATE STAGE IF NOT EXISTS fullstack_db.devops.specs
 DIRECTORY = ( ENABLE = true );
 ```
 
--- Enable access to External Resources
+### Enable access to External Resources
+
 Our application uses external stylesheets. 
 We will need to permit our service to access these external resources. Permitting access to external resources requires two steps:
 
@@ -257,7 +264,7 @@ Enable access to external resources with the following:
     ALLOWED_NETWORK_RULES = ( fullstack_db.application.bootstrap_npm_network_rule )
     ENABLED = true;
     ```
-3. Create a new WORK RULE called `fontawesome_network_rule` in the `application` SCHEMA which will allow egress to a host
+3. Create a new NETWORK RULE called `fontawesome_network_rule` in the `application` SCHEMA which will allow egress to a host
 `use.fontawesome.com`
 ```sql
 CREATE OR REPLACE NETWORK RULE fullstack_db.application.fontawesome_network_rule
@@ -274,7 +281,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION fontawesome_external_access
 ```
 5. Grant usage
 ```sql
-GRANT USAGE ON INTEGRATION pypi_access TO ROLE fullstack_service_role;
+GRANT USAGE ON INTEGRATION PYPI_ACCESS TO ROLE fullstack_service_role;
 GRANT USAGE ON INTEGRATION bootstrap_npm_external_access TO ROLE fullstack_service_role;
 GRANT USAGE ON INTEGRATION fontawesome_external_access TO ROLE fullstack_service_role;
 ```
@@ -294,12 +301,12 @@ docker login <your-account>.registry.snowflakecomputing.com
 docker build --platform linux/amd64 -t spcs-dash-app:latest .
 
 # Tag for Snowflake registry
-The <your-account> needs to replace all '_' with '-' and be all lowercase
-For instance: GENERIC-BOOM_AWS_US_EAST_1_1 would be generic-boom-aws-us-east-1-1
+# The <your-account> needs to replace all '_' with '-' and be all lowercase
+# For instance: GENERIC-BOOM_AWS_US_EAST_1_1 would be generic-boom-aws-us-east-1-1
 docker tag spcs-dash-app:latest <your-account>.registry.snowflakecomputing.com/fullstack_db/devops/images/dash_app
 
 # Push to Snowflake registry
-The <your-account> needs to replace all '_' with '-' and be all lowercase
+# The <your-account> needs to replace all '_' with '-' and be all lowercase
 docker push <your-account>.registry.snowflakecomputing.com/fullstack_db/devops/images/dash_app:latest
 
 # Verify image was pushed successfully
@@ -339,7 +346,7 @@ Upload and create the service:
 
 ```sql
 -- Upload service spec to stage
-* From VScode or your preferred tool upload the fullstack.yml file to the specs stage.
+-- From VScode or your preferred tool upload the dash-app.yml file to the specs stage.
 
 -- Create the service
 CREATE SERVICE fullstack_db.application.dash_app_service
@@ -349,13 +356,13 @@ CREATE SERVICE fullstack_db.application.dash_app_service
   EXTERNAL_ACCESS_INTEGRATIONS = (PYPI_ACCESS, BOOTSTRAP_NPM_EXTERNAL_ACCESS, FONTAWESOME_EXTERNAL_ACCESS);
 
 -- Check service status
-SELECT SYSTEM$GET_SERVICE_STATUS('fullstack_db.application.dash_service');
+SELECT SYSTEM$GET_SERVICE_STATUS('fullstack_db.application.dash_app_service');
 
 -- Get service logs
-SELECT SYSTEM$GET_SERVICE_LOGS('fullstack_db.application.dash_service', '0', 'dash-app');
+SELECT SYSTEM$GET_SERVICE_LOGS('fullstack_db.application.dash_app_service', '0', 'dash-app');
 
 -- Get public endpoint URL
-SHOW ENDPOINTS IN SERVICE fullstack_db.application.dash_service;
+SHOW ENDPOINTS IN SERVICE fullstack_db.application.dash_app_service;
 ```
 
 ### 7. Test Your Deployment
@@ -366,14 +373,14 @@ Once the service is running:
 2. **Visit the URL** in your browser and login
 3. **Check logs** if issues occur:
    ```sql
-   SELECT SYSTEM$GET_SERVICE_LOGS('fullstack_db.application.dash_service', '0', 'dash-app', 50);
+   SELECT SYSTEM$GET_SERVICE_LOGS('fullstack_db.application.dash_app_service', '0', 'dash-app', 50);
    ```
 4. **Verify data access** - the app should show Snowflake tables from `SNOWFLAKE_SAMPLE_DATA.TPCH_SF10`
 
 ## 🏗️ Project Structure
 
 ```
-spcs-dash/
+spcs-dash-clean/
 ├── app.py                    # Main Dash application with dual environment support
 ├── static/
 │   └── styles.css           # Snowflake-inspired CSS with three-theme system
@@ -570,13 +577,16 @@ This approach:
 Note: Make sure you have a `.env` file with your Snowflake credentials before running locally.
 
 **SPCS Deployment Issues:**
-- Check service status: ```
+- Check service status: 
+```sql
 DESCRIBE SERVICE fullstack_db.application.dash_app_service;
 SHOW SERVICE CONTAINERS IN SERVICE fullstack_db.application.dash_app_service;
 SHOW ENDPOINTS IN SERVICE fullstack_db.application.dash_app_service;
 select * FROM TABLE(fullstack_db.application.dash_app_service!SPCS_GET_LOGS());
 ```
-- View service logs: ```SELECT value AS log_line
+- View service logs: 
+```sql
+SELECT value AS log_line
   FROM TABLE(
     SPLIT_TO_TABLE(SYSTEM$GET_SERVICE_LOGS('fullstack_db.application.dash_app_service', 0, 'dash-app'), '\n')
   );
@@ -600,10 +610,10 @@ SHOW GRANTS ON IMAGE REPOSITORY fullstack_db.devops.images;
 **Service Creation Issues:**
 ```sql
 -- If service fails to start, check detailed status:
-SELECT SYSTEM$GET_SERVICE_STATUS('fullstack_db.application.dash_service');
+SELECT SYSTEM$GET_SERVICE_STATUS('fullstack_db.application.dash_app_service');
 
 -- Drop and recreate service if needed:
-DROP SERVICE IF EXISTS fullstack_db.application.dash_service;
+DROP SERVICE IF EXISTS fullstack_db.application.dash_app_service;
 
 CREATE SERVICE fullstack_db.application.dash_app_service
 IN COMPUTE POOL fullstack_compute_pool
@@ -646,8 +656,8 @@ docker-compose run --rm spcs-dash-app /bin/bash
 
 1. **Setup Development Environment**
    ```bash
-   git clone https://github.com/sfc-gh-jkang/spcs-dash.git
-   cd spcs-dash
+   git clone https://github.com/sfc-gh-jkang/spcs-dash-clean.git
+   cd spcs-dash-clean
    cp env.template .env  # Edit with your credentials
    uv venv && source .venv/bin/activate
    uv sync
@@ -685,10 +695,10 @@ docker-compose run --rm spcs-dash-app /bin/bash
 6. **Monitor Production**
    ```sql
    -- Check service health
-   SELECT SYSTEM$GET_SERVICE_STATUS('fullstack_db.application.dash_service');
+   SELECT SYSTEM$GET_SERVICE_STATUS('fullstack_db.application.dash_app_service');
    
    -- View application logs
-   SELECT SYSTEM$GET_SERVICE_LOGS('fullstack_db.application.dash_service', '0', 'dash-app', 100);
+   SELECT SYSTEM$GET_SERVICE_LOGS('fullstack_db.application.dash_app_service', '0', 'dash-app', 100);
    ```
 
 ### Code Quality Checklist
@@ -714,6 +724,6 @@ This project is licensed under the MIT License.
 
 ## 🔗 Links
 
-- **Repository**: https://github.com/sfc-gh-jkang/spcs-dash
+- **Repository**: https://github.com/sfc-gh-jkang/spcs-dash-clean
 - **Snowflake Container Services**: [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services)
 - **Dash Framework**: [Documentation](https://dash.plotly.com/) 
