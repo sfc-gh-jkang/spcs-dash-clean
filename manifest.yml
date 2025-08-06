@@ -1,0 +1,41 @@
+# Version identifier
+manifest_version: 1
+
+version: 1
+name: sample_dash_app
+description: A sample Dash application running on Snowflake
+
+artifacts:
+  setup_script: scripts/setup.sql
+  default_streamlit: app_instance_schema.streamlit
+  extension_code: true
+  default:
+    type: python
+    main: app.py
+    source: .
+    python:
+      - requirements.txt
+
+references:
+  - customer_sales:
+      label: "customer sales"
+      description: "Select table"
+      privileges:
+        - SELECT
+      object_type: Table
+      multi_valued: false
+      register_callback: app_instance_schema.update_reference
+
+privileges:
+  - READ
+  - WRITE
+  - EXECUTE
+
+environment:
+  python: "3.10"
+  packages:
+    - dash==3.0.4
+    - plotly==6.1.2
+    - pandas==2.2.3
+    - snowflake-snowpark-python==1.32.0
+    - dash-bootstrap-components==2.0.3
