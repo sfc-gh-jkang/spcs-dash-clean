@@ -14,3 +14,6 @@ wheels/
 
 # SPCS deployment configuration (contains account-specific info)
 dash-app.yml
+
+# Log files
+app.log
