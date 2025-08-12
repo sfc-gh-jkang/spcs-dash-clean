@@ -1,5 +1,5 @@
 [project]
-name = "levelup"
+name = "spcs-dash-clean"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -16,7 +16,53 @@ dependencies = [
     "pytz>=2025.2",
 ]
 
+[build-system]
+requires = ["uv_build>=0.8.9, <0.9.0"]
+build-backend = "uv_build"
+
 [dependency-groups]
 dev = [
     "ruff>=0.12.5",
+]
+test = [
+    "pytest>=8.0.0",
+    "pytest-mock>=3.12.0",
+    "pytest-cov>=4.0.0",
+    "psutil>=5.9.0",
+]
+
+[project.scripts]
+# Test commands
+test = "spcs_dash_clean.tasks:test"
+test-unit = "spcs_dash_clean.tasks:test_unit"
+test-security = "spcs_dash_clean.tasks:test_security"
+test-integration = "spcs_dash_clean.tasks:test_integration"
+test-stress = "spcs_dash_clean.tasks:test_stress"
+test-coverage = "spcs_dash_clean.tasks:test_coverage"
+
+# Development commands
+lint = "spcs_dash_clean.tasks:lint"
+clean = "spcs_dash_clean.tasks:clean"
+help = "spcs_dash_clean.tasks:help_cmd"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v", 
+    "--tb=short",
+    "--disable-warnings"
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests", 
+    "security: Security validation tests",
+    "stress: Stress and performance tests",
+    "slow: Tests that take longer to run"
+]
+filterwarnings = [
+    "ignore",
+    "ignore::Warning"
 ]

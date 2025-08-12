@@ -16,4 +16,29 @@ wheels/
 dash-app.yml
 
 # Log files
+*.log
 app.log
+
+# Test coverage reports
+.coverage
+htmlcov/
+
+# Cache directories
+.pytest_cache/
+.ruff_cache/
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

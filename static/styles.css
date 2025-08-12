@@ -232,3 +232,47 @@ body.dark-theme .btn-info.theme-btn:hover {
     background-color: #20c997 !important;
     color: white !important;
 }
+
+/* Common Query Items Styling */
+.query-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.query-item:hover {
+    background-color: rgba(41, 181, 232, 0.1) !important;
+    border-left-color: var(--snowflake-blue) !important;
+    transform: translateX(2px);
+}
+
+.query-item:active {
+    background-color: rgba(41, 181, 232, 0.2) !important;
+    transform: translateX(1px);
+}
+
+/* Light theme query items */
+.light-theme .query-item:hover {
+    background-color: rgba(0, 123, 255, 0.1) !important;
+    border-left-color: #007bff !important;
+}
+
+.light-theme .query-item:active {
+    background-color: rgba(0, 123, 255, 0.2) !important;
+}
+
+/* Dark theme query items */
+.dark-theme .query-item {
+    background-color: rgba(51, 65, 85, 0.3) !important;
+    border-color: rgba(51, 65, 85, 0.5) !important;
+    color: #F1F5F9 !important;
+}
+
+.dark-theme .query-item:hover {
+    background-color: rgba(30, 58, 138, 0.3) !important;
+    border-left-color: #1E40AF !important;
+}
+
+.dark-theme .query-item:active {
+    background-color: rgba(30, 58, 138, 0.4) !important;
+}
