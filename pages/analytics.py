@@ -7,7 +7,6 @@ from dash import html, dcc, Output, Input, State, callback, no_update
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
 import logging
 
 from components.layout import create_page_container
@@ -185,7 +184,11 @@ def layout():
                                             dcc.Loading(
                                                 id="query-loading",
                                                 children=html.Div(
-                                                    id="query-results-content"
+                                                    id="query-results-wrapper",
+                                                    children=html.Div(
+                                                        id="query-results-content"
+                                                    ),
+                                                    className="ag-theme-alpine",
                                                 ),
                                                 type="default",
                                                 style={"minHeight": "200px"},
@@ -432,7 +435,12 @@ def layout():
                                     dbc.CardBody(
                                         [
                                             dbc.Spinner(
-                                                html.Div(id="analysis-results-content"),
+                                                html.Div(
+                                                    id="analysis-results-wrapper",
+                                                    children=html.Div(
+                                                        id="analysis-results-content"
+                                                    ),
+                                                ),
                                                 color="primary",
                                                 type="border",
                                             )
@@ -475,16 +483,71 @@ def layout():
         Output("analysis-results-header", "children"),
     ],
     [Input("run-analysis-btn", "n_clicks"), Input("theme-store", "data")],
-    State("analytics-type-dropdown", "value"),
+    [
+        State("analytics-type-dropdown", "value"),
+        State("analysis-results-content", "children"),
+    ],
     prevent_initial_call=True,
 )
-def run_predefined_analysis(n_clicks, theme_data, analysis_type):
+def run_predefined_analysis(n_clicks, theme_data, analysis_type, existing_content=None):
     """Run predefined analytics based on selection."""
+    # Avoid re-running analysis on theme-only changes
+    triggered_id = None
+    try:
+        ctx = dash.callback_context
+        if getattr(ctx, "triggered", None):
+            triggered_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    except Exception:
+        triggered_id = None
+
+    if triggered_id == "theme-store":
+        # Restyle existing figure without re-running analysis
+        try:
+            current_theme = (
+                theme_data.get("current_theme", "snowflake")
+                if theme_data
+                else "snowflake"
+            )
+            template = "plotly_dark" if current_theme == "dark" else "plotly_white"
+
+            # existing_content is typically html.Div([dcc.Graph(...), details])
+            content = existing_content
+            if not content:
+                return no_update, no_update
+
+            # Dash may pass component or list; normalize to list of children
+            children = None
+            try:
+                # If it's a component with .children
+                children = content.children  # type: ignore[attr-defined]
+            except Exception:
+                children = content
+
+            if isinstance(children, list) and children:
+                first = children[0]
+                try:
+                    # Update figure template in-place
+                    fig_dict = first.figure  # type: ignore[attr-defined]
+                    fig = go.Figure(fig_dict)
+                    fig.update_layout(template=template)
+                    children[0] = dcc.Graph(figure=fig)
+                    # Add a wrapper class to allow CSS theming for accordion
+                    return html.Div(
+                        children,
+                        className=("dark-analytics" if current_theme == "dark" else ""),
+                    ), no_update
+                except Exception:
+                    return no_update, no_update
+
+            return no_update, no_update
+        except Exception:
+            return no_update, no_update
+
     if not n_clicks:
         return [], "Analysis Results"
 
     try:
-        # Determine theme
+        # Determine theme and show which analysis is running
         current_theme = (
             theme_data.get("current_theme", "snowflake") if theme_data else "snowflake"
         )
@@ -496,29 +559,74 @@ def run_predefined_analysis(n_clicks, theme_data, analysis_type):
         else:
             template = "plotly_white"
 
-        if analysis_type == "sales":
-            # Sample sales analysis
-            df = pd.DataFrame(
-                {
-                    "Month": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-                    "Sales": [45000, 52000, 48000, 61000, 55000, 67000],
-                    "Target": [50000, 50000, 50000, 55000, 55000, 60000],
-                }
+        # Helper to build a details accordion showing SQL and transformations
+        def build_details(sql_text: str, transformations: list[str]) -> dbc.Accordion:
+            return dbc.Accordion(
+                [
+                    dbc.AccordionItem(
+                        [
+                            html.Div(
+                                [
+                                    html.H6("SQL Executed", className="mb-2"),
+                                    html.Pre(
+                                        sql_text, style={"whiteSpace": "pre-wrap"}
+                                    ),
+                                ],
+                                className="mb-3",
+                            ),
+                            html.Div(
+                                [
+                                    html.H6("Transformations", className="mb-2"),
+                                    html.Ul([html.Li(t) for t in transformations]),
+                                ]
+                            ),
+                        ],
+                        title="Query & Transform Details",
+                    )
+                ],
+                start_collapsed=True,
+                class_name="mt-3",
             )
+
+        if analysis_type == "sales":
+            # Prefer real sample data; fallback to synthetic
+            sql = (
+                "SELECT DATE_TRUNC('month', O_ORDERDATE) AS MONTH, "
+                "SUM(O_TOTALPRICE) AS SALES, AVG(O_TOTALPRICE) AS TARGET "
+                "FROM snowflake_sample_data.tpch_sf10.orders "
+                "GROUP BY 1 ORDER BY 1 LIMIT 24"
+            )
+            sdf = execute_query(sql)
+            if "error" in sdf.columns or sdf.empty:
+                err = (
+                    sdf["error"].iloc[0]
+                    if "error" in sdf.columns and not sdf.empty
+                    else "No data returned"
+                )
+                return (
+                    dbc.Alert(f"Error running analysis: {err}", color="danger"),
+                    "Sales Analysis Results",
+                )
+            else:
+                x_vals, sales_vals, target_vals = (
+                    sdf.iloc[:, 0],
+                    sdf.iloc[:, 1],
+                    sdf.iloc[:, 2],
+                )
 
             fig = go.Figure()
             fig.add_trace(
                 go.Scatter(
-                    x=df["Month"],
-                    y=df["Sales"],
+                    x=x_vals,
+                    y=sales_vals,
                     name="Actual Sales",
                     line=dict(color="#29B5E8"),
                 )
             )
             fig.add_trace(
                 go.Scatter(
-                    x=df["Month"],
-                    y=df["Target"],
+                    x=x_vals,
+                    y=target_vals,
                     name="Target",
                     line=dict(color="#FF6B6B", dash="dash"),
                 )
@@ -527,143 +635,237 @@ def run_predefined_analysis(n_clicks, theme_data, analysis_type):
                 title="Sales vs Target Analysis", template=template, height=400
             )
 
-            return dcc.Graph(figure=fig), "Sales Analysis Results"
+            details = build_details(
+                sql,
+                [
+                    "DATE_TRUNC by month on O_ORDERDATE",
+                    "Aggregations: SUM(O_TOTALPRICE) as SALES, AVG(O_TOTALPRICE) as TARGET",
+                    "GROUP BY month, ORDER BY month",
+                    "LIMIT 24",
+                ],
+            )
+            return html.Div(
+                [dcc.Graph(figure=fig), details],
+                className=("dark-analytics" if current_theme == "dark" else ""),
+            ), "Sales Analysis Results"
 
         elif analysis_type == "customers":
-            # Customer segmentation
-            df = pd.DataFrame(
-                {
-                    "Segment": ["High Value", "Medium Value", "Low Value", "New"],
-                    "Count": [150, 320, 480, 200],
-                    "Revenue": [450000, 320000, 180000, 50000],
-                }
+            sql = (
+                "SELECT C_MKTSEGMENT AS SEGMENT, COUNT(*) AS CNT "
+                "FROM snowflake_sample_data.tpch_sf10.customer GROUP BY 1 ORDER BY CNT DESC LIMIT 6"
             )
+            sdf = execute_query(sql)
+            if "error" in sdf.columns or sdf.empty:
+                err = (
+                    sdf["error"].iloc[0]
+                    if "error" in sdf.columns and not sdf.empty
+                    else "No data returned"
+                )
+                return (
+                    dbc.Alert(f"Error running analysis: {err}", color="danger"),
+                    "Customer Segmentation Results",
+                )
+            df = sdf
 
             fig = px.pie(
                 df,
-                values="Count",
-                names="Segment",
+                values=df.columns[1],
+                names=df.columns[0],
                 title="Customer Segmentation by Count",
             )
             fig.update_layout(template=template, height=400)
-
-            return dcc.Graph(figure=fig), "Customer Segmentation Results"
+            details = build_details(
+                sql,
+                [
+                    "Aggregation: COUNT(*) by C_MKTSEGMENT",
+                    "GROUP BY segment",
+                    "ORDER BY count DESC",
+                    "LIMIT 6",
+                ],
+            )
+            return html.Div(
+                [dcc.Graph(figure=fig), details],
+                className=("dark-analytics" if current_theme == "dark" else ""),
+            ), "Customer Segmentation Results"
 
         elif analysis_type == "products":
-            # Product performance
-            df = pd.DataFrame(
-                {
-                    "Product": [
-                        "Product A",
-                        "Product B",
-                        "Product C",
-                        "Product D",
-                        "Product E",
-                    ],
-                    "Revenue": [120000, 85000, 95000, 115000, 75000],
-                    "Units": [850, 720, 960, 640, 580],
-                }
+            sql = (
+                "SELECT p.P_NAME AS PRODUCT, SUM(l.L_EXTENDEDPRICE) AS REVENUE, SUM(l.L_QUANTITY) AS UNITS "
+                "FROM snowflake_sample_data.tpch_sf10.part p "
+                "JOIN snowflake_sample_data.tpch_sf10.lineitem l ON p.P_PARTKEY = l.L_PARTKEY "
+                "GROUP BY 1 ORDER BY REVENUE DESC LIMIT 10"
             )
+            sdf = execute_query(sql)
+            if "error" in sdf.columns or sdf.empty:
+                err = (
+                    sdf["error"].iloc[0]
+                    if "error" in sdf.columns and not sdf.empty
+                    else "No data returned"
+                )
+                return (
+                    dbc.Alert(f"Error running analysis: {err}", color="danger"),
+                    "Product Performance Results",
+                )
+            df = sdf
 
             fig = px.scatter(
                 df,
-                x="Units",
-                y="Revenue",
-                text="Product",
+                x=df.columns[2],
+                y=df.columns[1],
+                text=df.columns[0],
                 title="Product Performance: Revenue vs Units Sold",
             )
             fig.update_traces(textposition="top center")
             fig.update_layout(template=template, height=400)
-
-            return dcc.Graph(figure=fig), "Product Performance Results"
+            details = build_details(
+                sql,
+                [
+                    "JOIN part (p) with lineitem (l) on P_PARTKEY",
+                    "Aggregations: SUM(L_EXTENDEDPRICE) as REVENUE, SUM(L_QUANTITY) as UNITS",
+                    "GROUP BY product name",
+                    "ORDER BY REVENUE DESC",
+                    "LIMIT 10",
+                ],
+            )
+            return html.Div(
+                [dcc.Graph(figure=fig), details],
+                className=("dark-analytics" if current_theme == "dark" else ""),
+            ), "Product Performance Results"
 
         elif analysis_type == "regions":
-            # Regional analysis
-            df = pd.DataFrame(
-                {
-                    "Region": ["North", "South", "East", "West", "Central"],
-                    "Revenue": [120000, 85000, 95000, 115000, 90000],
-                    "Growth": [15.2, 8.1, 12.3, 18.7, 10.5],
-                }
+            sql = (
+                "SELECT r.R_NAME AS REGION, SUM(o.O_TOTALPRICE) AS REVENUE "
+                "FROM snowflake_sample_data.tpch_sf10.region r "
+                "JOIN snowflake_sample_data.tpch_sf10.nation n ON r.R_REGIONKEY = n.N_REGIONKEY "
+                "JOIN snowflake_sample_data.tpch_sf10.customer c ON n.N_NATIONKEY = c.C_NATIONKEY "
+                "JOIN snowflake_sample_data.tpch_sf10.orders o ON c.C_CUSTKEY = o.O_CUSTKEY "
+                "GROUP BY 1 ORDER BY REVENUE DESC LIMIT 5"
             )
+            sdf = execute_query(sql)
+            if "error" in sdf.columns or sdf.empty:
+                err = (
+                    sdf["error"].iloc[0]
+                    if "error" in sdf.columns and not sdf.empty
+                    else "No data returned"
+                )
+                return (
+                    dbc.Alert(f"Error running analysis: {err}", color="danger"),
+                    "Regional Analysis Results",
+                )
+            df = sdf
 
             fig = px.bar(
                 df,
-                x="Region",
-                y="Revenue",
-                color="Growth",
-                title="Regional Revenue and Growth Analysis",
-                color_continuous_scale="Blues",
+                x=df.columns[0],
+                y=df.columns[1],
+                title="Regional Revenue Analysis",
+                color_discrete_sequence=["#29B5E8"],
             )
             fig.update_layout(template=template, height=400)
-
-            return dcc.Graph(figure=fig), "Regional Analysis Results"
+            details = build_details(
+                sql,
+                [
+                    "JOIN region→nation→customer→orders to relate regions to order revenue",
+                    "Aggregation: SUM(O_TOTALPRICE) by region",
+                    "GROUP BY region",
+                    "ORDER BY revenue DESC",
+                    "LIMIT 5",
+                ],
+            )
+            return html.Div(
+                [dcc.Graph(figure=fig), details],
+                className=("dark-analytics" if current_theme == "dark" else ""),
+            ), "Regional Analysis Results"
 
         else:  # timeseries
-            # Time series analysis
-            dates = pd.date_range("2023-01-01", periods=12, freq="M")
-            df = pd.DataFrame(
-                {
-                    "Date": dates,
-                    "Value": [
-                        100,
-                        110,
-                        105,
-                        120,
-                        115,
-                        130,
-                        125,
-                        140,
-                        135,
-                        150,
-                        145,
-                        160,
-                    ],
-                    "Trend": [
-                        100,
-                        105,
-                        110,
-                        115,
-                        120,
-                        125,
-                        130,
-                        135,
-                        140,
-                        145,
-                        150,
-                        155,
-                    ],
-                }
+            sql = (
+                "SELECT DATE_TRUNC('month', O_ORDERDATE) AS MONTH, SUM(O_TOTALPRICE) AS REVENUE "
+                "FROM snowflake_sample_data.tpch_sf10.orders GROUP BY 1 ORDER BY 1 LIMIT 24"
             )
+            sdf = execute_query(sql)
+            if "error" in sdf.columns or sdf.empty:
+                err = (
+                    sdf["error"].iloc[0]
+                    if "error" in sdf.columns and not sdf.empty
+                    else "No data returned"
+                )
+                return (
+                    dbc.Alert(f"Error running analysis: {err}", color="danger"),
+                    "Time Series Analysis Results",
+                )
+            df = sdf
 
             fig = go.Figure()
             fig.add_trace(
                 go.Scatter(
-                    x=df["Date"],
-                    y=df["Value"],
-                    name="Actual",
+                    x=df.iloc[:, 0],
+                    y=df.iloc[:, 1],
+                    name="Revenue",
                     line=dict(color="#29B5E8"),
                 )
             )
-            fig.add_trace(
-                go.Scatter(
-                    x=df["Date"],
-                    y=df["Trend"],
-                    name="Trend",
-                    line=dict(color="#FF6B6B"),
-                )
-            )
             fig.update_layout(
-                title="Time Series Analysis with Trend", template=template, height=400
+                title="Time Series Analysis", template=template, height=400
             )
-
-            return dcc.Graph(figure=fig), "Time Series Analysis Results"
+            details = build_details(
+                sql,
+                [
+                    "DATE_TRUNC by month on O_ORDERDATE",
+                    "Aggregation: SUM(O_TOTALPRICE) as REVENUE",
+                    "GROUP BY month, ORDER BY month",
+                    "LIMIT 24",
+                ],
+            )
+            return html.Div(
+                [dcc.Graph(figure=fig), details],
+                className=("dark-analytics" if current_theme == "dark" else ""),
+            ), "Time Series Analysis Results"
 
     except Exception as e:
         logger.error(f"Error in predefined analysis: {e}")
         return dbc.Alert(
             f"Error running analysis: {str(e)}", color="danger"
         ), "Analysis Results"
+
+
+@callback(
+    Output("query-results-wrapper", "className"),
+    Input("theme-store", "data"),
+    prevent_initial_call=False,
+)
+def sync_query_results_theme(theme_data):
+    is_dark = bool(theme_data and theme_data.get("current_theme") == "dark")
+    return "ag-theme-alpine-dark" if is_dark else "ag-theme-alpine"
+
+
+@callback(
+    Output("analysis-results-wrapper", "className"),
+    Input("theme-store", "data"),
+    prevent_initial_call=False,
+)
+def sync_analysis_results_theme(theme_data):
+    is_dark = bool(theme_data and theme_data.get("current_theme") == "dark")
+    return "dark-analytics" if is_dark else ""
+
+
+@callback(
+    Output("query-loading", "overlay_style"),
+    Input("theme-store", "data"),
+    prevent_initial_call=False,
+)
+def update_query_loading_overlay_theme(theme_data):
+    is_dark = bool(theme_data and theme_data.get("current_theme") == "dark")
+    dark_overlay = {
+        "backgroundColor": "rgba(15, 23, 42, 0.85)",
+        "visibility": "visible",
+        "opacity": 0.7,
+    }
+    light_overlay = {
+        "backgroundColor": "white",
+        "visibility": "visible",
+        "opacity": 0.7,
+    }
+    return dark_overlay if is_dark else light_overlay
 
 
 @callback(
@@ -746,9 +948,12 @@ def execute_custom_query(n_clicks, query):
                 "danger",
             )
 
-        # Format results and show success notification
+        # Format results and show success notification (no embedded theme class)
         formatted_results = format_query_results(
-            result_df, max_rows=1000, grid_id="analytics-query-results-grid"
+            result_df,
+            max_rows=1000,
+            grid_id="analytics-query-results-grid",
+            apply_theme_on_container=True,
         )
 
         row_count = len(result_df)

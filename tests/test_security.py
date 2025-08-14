@@ -347,9 +347,9 @@ class TestAdvancedSQLInjection:
         for pattern in second_order_patterns:
             query = f"SELECT * FROM customer WHERE name = '{pattern}'"
             result = _perform_additional_security_checks(query.upper(), query)
-            assert result["error"], (
-                f"Failed to detect second-order injection: {pattern}"
-            )
+            assert result[
+                "error"
+            ], f"Failed to detect second-order injection: {pattern}"
 
     def test_function_based_injection(self):
         """Test injection through SQL functions."""
@@ -366,9 +366,9 @@ class TestAdvancedSQLInjection:
             result = _perform_additional_security_checks(query.upper(), query)
             # Some might be legitimate, but combined patterns should be caught
             if "SELECT" in injection.upper() and "FROM" in injection.upper():
-                assert result["error"], (
-                    f"Failed to detect function-based injection: {injection}"
-                )
+                assert result[
+                    "error"
+                ], f"Failed to detect function-based injection: {injection}"
 
 
 @pytest.mark.security
@@ -602,9 +602,9 @@ class TestRealWorldAttackScenarios:
                     if any(
                         keyword in query_part.upper() for keyword in dangerous_keywords
                     ):
-                        assert result["error"], (
-                            f"Failed to detect attack chain part: {query_part}"
-                        )
+                        assert result[
+                            "error"
+                        ], f"Failed to detect attack chain part: {query_part}"
 
     def test_data_breach_scenarios(self):
         """Test common data breach scenarios."""
@@ -723,9 +723,9 @@ class TestSecurityLogging:
             if hasattr(record, "message")
         )
         has_error = "error" in result.columns
-        assert has_log or has_error, (
-            "Security violation should be logged or returned as error"
-        )
+        assert (
+            has_log or has_error
+        ), "Security violation should be logged or returned as error"
 
     def test_suspicious_pattern_logging(self, caplog, reset_query_history):
         """Test logging of suspicious patterns."""
@@ -746,9 +746,9 @@ class TestSecurityLogging:
                     error_count += 1
 
         # Should have blocked all suspicious queries
-        assert error_count >= len(suspicious_queries) * 0.8, (
-            f"Only blocked {error_count} out of {len(suspicious_queries)} suspicious queries"
-        )
+        assert (
+            error_count >= len(suspicious_queries) * 0.8
+        ), f"Only blocked {error_count} out of {len(suspicious_queries)} suspicious queries"
 
     def test_rate_limit_violation_logging(self, caplog, reset_query_history):
         """Test that rate limit violations are logged."""
@@ -764,9 +764,9 @@ class TestSecurityLogging:
             _query_history.append(current_time)
 
         # Verify we have the expected number of entries
-        assert len(_query_history) == _MAX_QUERIES_PER_MINUTE, (
-            f"Expected {_MAX_QUERIES_PER_MINUTE} entries, got {len(_query_history)}"
-        )
+        assert (
+            len(_query_history) == _MAX_QUERIES_PER_MINUTE
+        ), f"Expected {_MAX_QUERIES_PER_MINUTE} entries, got {len(_query_history)}"
 
         with caplog.at_level("INFO"):
             result = execute_query("SELECT 1")

@@ -9,7 +9,7 @@ from snowflake.snowpark.session import Session
 import warnings
 import re
 import time
-from typing import Dict, Union
+from typing import Dict, Union, List
 from dash import html
 import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
@@ -21,7 +21,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="snowflake.*")
 logger = logging.getLogger(__name__)
 
 # Simple query tracking for rate limiting and monitoring
-_query_history = []
+_query_history: List[float] = []
 _MAX_QUERIES_PER_MINUTE = 30
 _QUERY_TIMEOUT_SECONDS = 30
 
@@ -769,9 +769,13 @@ def execute_query(query: str, max_rows: int = 10000) -> pd.DataFrame:
         # Use the safe query (potentially modified with LIMIT)
         safe_query = safety_check["safe_query"]
 
-        logger.info(
-            f"Executing safe query: {safe_query[:100]}{'...' if len(safe_query) > 100 else ''}"
-        )
+        if isinstance(safe_query, str):
+            preview = safe_query[:100]
+            if len(safe_query) > 100:
+                preview += "..."
+        else:
+            preview = ""
+        logger.info(f"Executing safe query: {preview}")
 
         # Execute the query with timing
         start_time = time.time()
@@ -803,6 +807,7 @@ def format_query_results(
     max_rows: int = 1000,
     grid_id: str = "query-results-grid",
     theme: str = "alpine",
+    apply_theme_on_container: bool = False,
 ) -> html.Div:
     """
     Format a pandas DataFrame into an AG Grid for display with advanced features.
@@ -860,7 +865,7 @@ def format_query_results(
         id=grid_id,
         rowData=row_data,
         columnDefs=column_defs,
-        className=grid_theme,
+        className=("" if apply_theme_on_container else grid_theme),
         style={"height": "500px", "width": "100%"},
         dashGridOptions={
             "pagination": True,

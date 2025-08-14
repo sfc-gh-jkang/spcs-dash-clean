@@ -51,9 +51,9 @@ class TestSecurityStressTesting:
 
         # All malicious queries should be blocked
         blocked_queries = [r for r in results if "error" in r.columns]
-        assert len(blocked_queries) == len(malicious_queries), (
-            "Not all malicious queries were blocked"
-        )
+        assert len(blocked_queries) == len(
+            malicious_queries
+        ), "Not all malicious queries were blocked"
 
         # Verify error messages contain security-related keywords
         for result in blocked_queries:
@@ -107,9 +107,9 @@ class TestSecurityStressTesting:
         assert len(blocked_results) > 0, "No injection attempts were detected"
 
         # Test should complete in reasonable time (performance validation)
-        assert end_time - start_time < 30, (
-            "Security validation took too long under load"
-        )
+        assert (
+            end_time - start_time < 30
+        ), "Security validation took too long under load"
 
     def test_rate_limit_stress_test(self, reset_query_history):
         """Test rate limiting under extreme load."""
@@ -168,15 +168,15 @@ class TestLargeScaleSecurityValidation:
 
         # Performance validation
         queries_per_second = len(large_attack_set) / processing_time
-        assert queries_per_second > 10, (
-            f"Security validation too slow: {queries_per_second} queries/sec"
-        )
+        assert (
+            queries_per_second > 10
+        ), f"Security validation too slow: {queries_per_second} queries/sec"
 
         # Security validation
         blocked_attacks = [r for r in results if r["error"]]
-        assert len(blocked_attacks) > len(large_attack_set) * 0.8, (
-            "Not enough attacks were blocked"
-        )
+        assert (
+            len(blocked_attacks) > len(large_attack_set) * 0.8
+        ), "Not enough attacks were blocked"
 
     def test_memory_usage_under_attack_load(self, real_world_attack_scenarios):
         """Test memory usage doesn't grow excessively under attack load."""
@@ -399,9 +399,9 @@ class TestComprehensiveSecurityAudit:
             threshold = coverage_thresholds.get(
                 category, 80
             )  # Default to 80% if not specified
-            assert coverage >= threshold, (
-                f"Low security coverage for {category}: {coverage}% (threshold: {threshold}%)"
-            )
+            assert (
+                coverage >= threshold
+            ), f"Low security coverage for {category}: {coverage}% (threshold: {threshold}%)"
 
         # Overall coverage should be very high
         total_attacks = sum(
@@ -412,9 +412,9 @@ class TestComprehensiveSecurityAudit:
             for attacks in advanced_attack_patterns.values()
         )
         overall_coverage = (total_blocked / total_attacks) * 100
-        assert overall_coverage >= 83, (
-            f"Overall security coverage too low: {overall_coverage}%"
-        )
+        assert (
+            overall_coverage >= 83
+        ), f"Overall security coverage too low: {overall_coverage}%"
 
     def test_false_positive_rate(self, safe_sql_queries):
         """Test false positive rate with legitimate queries."""
@@ -428,9 +428,9 @@ class TestComprehensiveSecurityAudit:
         false_positive_rate = (false_positives / len(safe_sql_queries)) * 100
 
         # False positive rate should be very low (< 5%)
-        assert false_positive_rate < 5, (
-            f"False positive rate too high: {false_positive_rate}%"
-        )
+        assert (
+            false_positive_rate < 5
+        ), f"False positive rate too high: {false_positive_rate}%"
 
     def test_security_validation_consistency(self, dangerous_sql_queries):
         """Test consistency of security validation across multiple runs."""
@@ -452,9 +452,9 @@ class TestComprehensiveSecurityAudit:
         inconsistent_validations = [
             q for q, consistent in consistency_results.items() if not consistent
         ]
-        assert len(inconsistent_validations) == 0, (
-            f"Inconsistent validations: {inconsistent_validations}"
-        )
+        assert (
+            len(inconsistent_validations) == 0
+        ), f"Inconsistent validations: {inconsistent_validations}"
 
 
 @pytest.mark.security
@@ -485,9 +485,9 @@ class TestSecurityPerformanceUnderLoad:
         max_performance = max(performance_results.values())
         performance_ratio = min_performance / max_performance
 
-        assert performance_ratio > 0.1, (
-            f"Performance degraded significantly: {performance_results}"
-        )
+        assert (
+            performance_ratio > 0.1
+        ), f"Performance degraded significantly: {performance_results}"
 
     def test_concurrent_security_validation_performance(self):
         """Test security validation performance under concurrent load."""
@@ -511,9 +511,9 @@ class TestSecurityPerformanceUnderLoad:
 
             # All queries should be blocked
             blocked_queries = [r for r in results if r["error"]]
-            assert len(blocked_queries) == 100, (
-                f"Not all queries blocked with {workers} workers"
-            )
+            assert (
+                len(blocked_queries) == 100
+            ), f"Not all queries blocked with {workers} workers"
 
         # Concurrent performance should be reasonable
         for workers, qps in performance_results.items():

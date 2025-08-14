@@ -14,13 +14,10 @@ def create_navbar():
                 # Brand/Logo section
                 html.Div(
                     [
-                        html.I(
-                            className="fas fa-snowflake me-2", style={"color": "white"}
-                        ),
+                        html.I(className="fas fa-snowflake me-2 brand-icon"),
                         html.H1(
                             "Snowflake Analytics Platform",
-                            className="d-inline mb-0",
-                            style={"color": "white", "fontWeight": "600"},
+                            className="d-inline mb-0 brand-title",
                         ),
                     ],
                     className="d-flex align-items-center",

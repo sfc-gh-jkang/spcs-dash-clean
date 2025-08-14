@@ -23,6 +23,8 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "ruff>=0.12.5",
+    "pre-commit>=3.7.0",
+    "types-pytz>=2025.1.0.0",
 ]
 test = [
     "pytest>=8.0.0",
@@ -66,3 +68,6 @@ filterwarnings = [
     "ignore",
     "ignore::Warning"
 ]
+
+[tool.mypy]
+ignore_missing_imports = true

@@ -19,7 +19,7 @@ Want to try the app immediately?
 1. `git clone https://github.com/sfc-gh-jkang/spcs-dash-clean.git`
 2. `cd spcs-dash-clean && cp env.template .env`
 3. Edit `.env` with your Snowflake credentials
-4. `docker-compose up --build` or 'uv run app.py' to run without the docker overhead
+4. `docker-compose up --build` or `uv run app.py` to run without Docker
 5. Visit http://localhost:8000
 6. To spin down your container run `docker-compose down`
 7. Remember that this is NOT enough commands to deploy this Dash App to Snowflake
@@ -40,7 +40,7 @@ You'll see:
 - 🔍 **Advanced Data Grid**: Sort, filter, paginate 60M+ rows (CUSTOMER, ORDERS, LINEITEM, etc.)
 - 📈 **Real-time Metrics**: Row counts, table sizes, creation dates with NYC timezone
 
-**🧪 Want to test the security features?** Run `uv run pytest tests/test_security.py -v` to see 50+ enterprise-grade security tests in action!
+**🧪 Want to test the security features?** Run `uv run pytest tests/test_security.py -v` to see 50+ enterprise-grade security tests in action! For full coverage, run `uv run test-coverage`.
 
 ## 🚀 Features
 
@@ -50,10 +50,19 @@ You'll see:
 - **Enhanced Theme System**: Interactive theme buttons with hover effects and proper visual feedback
 - **Real-time Analytics**: Interactive charts and visualizations with theme-aware Plotly styling
 - **Enterprise Security**: SQL injection prevention, access control, rate limiting, and input sanitization
-- **Comprehensive Testing**: 84+ test cases including security validation, stress tests, and integration tests
+- **Comprehensive Testing**: 309 tests with 100% coverage across `utils`, `pages`, and `components`
 - **Robust Logging**: Comprehensive logging with NYC timezone support
 - **Clean Architecture**: Externalized CSS for better maintainability and performance
 - **Container Ready**: Optimized Docker setup for SPCS deployment
+
+### Recent UX and Security Improvements
+
+- Added a curated "Common Queries" panel on Analytics with one-click insertion (Top Customers, Sales by Region, Product Performance, Table Information)
+- Replaced custom loading overlay with standard `dcc.Loading` (reliable show/hide and no page-load flicker)
+- Simplified execute callback to 4 outputs; added `callback_context` guards to prevent accidental triggers on page load
+- Security keyword matching now uses whole-word boundaries (no false positives on `created`, `create_date`, etc.)
+- Updated table information query comment to avoid `GET` keyword in comments
+- Increased rate limit from 10 → 30 queries per minute
 
 ## 📋 Prerequisites
 
@@ -117,11 +126,8 @@ SNOWFLAKE_SCHEMA=PUBLIC
 ### 4. Run Locally
 
 ```bash
-# With UV
+# With UV (preferred)
 uv run app.py
-
-# Or with Python directly
-python app.py
 ```
 
 Visit: **http://localhost:8000**
@@ -131,11 +137,11 @@ Visit: **http://localhost:8000**
 ### 5. Code Quality
 
 ```bash
-# Lint and format code
-uv run ruff check --fix
+# Format and lint
+uv run ruff format . && uv run ruff check .
 
-# Check for issues
-uv run ruff check
+# Run full suite with coverage
+uv run test-coverage
 ```
 
 ## 🐳 Docker Development
@@ -720,26 +726,26 @@ tests/
 ├── test_security_stress.py       # Security stress tests & edge cases
 ├── test_integration.py           # End-to-end integration tests
 ├── conftest.py                   # Shared fixtures and test utilities
-└── pytest.ini                    # Pytest configuration
+└── pyproject.toml               # Pytest configuration (tool.pytest.ini_options)
 ```
 
 ### 🚀 Quick Test Commands
 
 ```bash
 # Run all tests
-make test
+uv run pytest tests/ -v
 
-# Run specific test categories
-make test-unit          # Unit tests only
-make test-security      # Security validation tests
-make test-integration   # Integration tests
-make test-stress        # Stress tests
+# Run specific test categories (markers)
+uv run pytest tests/ -m unit -v
+uv run pytest tests/ -m security -v
+uv run pytest tests/ -m integration -v
+uv run pytest tests/ -m stress -v
 
 # Run with coverage report
-make test-coverage
+uv run test-coverage
 
-# Run linting
-make lint
+# Lint & format
+uv run ruff format . && uv run ruff check .
 ```
 
 ### 📊 Test Categories & Coverage
@@ -755,8 +761,8 @@ make lint
 uv run pytest tests/test_snowflake_utils.py -v
 ```
 
-#### **2. Security Tests** (`test_security.py`) - **50 Test Cases**
-**Enterprise-grade security validation** with **98% pass rate**:
+#### **2. Security Tests** (`test_security.py`)
+Enterprise-grade security validation within a suite of 309 total tests and 100% coverage:
 
 - 🛡️ **SQL Injection Prevention**: Classic, blind, polyglot, second-order attacks
 - 🔒 **Access Control**: Schema restrictions, file operation prevention
@@ -862,22 +868,20 @@ uv run pytest -k "not concurrent" -v
 ### 🔧 Test Configuration
 
 #### **pytest.ini Configuration**
-```ini
-[tool:pytest]
-testpaths = tests
-python_files = test_*.py
-python_classes = Test*
-python_functions = test_*
-markers =
-    unit: Unit tests
-    integration: Integration tests
-    security: Security validation tests
-    stress: Stress and performance tests
-    slow: Tests that take longer to run
-addopts = 
-    -v
-    --tb=short
-    --strict-markers
+```toml
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = ["-v", "--tb=short", "--disable-warnings"]
+markers = [
+  "unit: Unit tests",
+  "integration: Integration tests",
+  "security: Security validation tests",
+  "stress: Stress and performance tests",
+  "slow: Tests that take longer to run",
+]
 ```
 
 #### **Running Tests in Development**
@@ -960,9 +964,9 @@ For automated testing in CI/CD pipelines:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. **Run the full test suite**: `make test` or `uv run pytest tests/ -v`
+4. **Run the full test suite**: `uv run pytest tests/ -v`
 5. **Ensure security tests pass**: `uv run pytest tests/test_security.py -v`
-6. **Run linting**: `make lint` or `uv run ruff check --fix`
+6. **Run linting**: `uv run ruff format . && uv run ruff check .`
 7. Submit a pull request
 
 **Required for all contributions:**

@@ -222,13 +222,13 @@ class TestPageLayoutConsistency:
 
         for page_name, layout in layouts.items():
             # All pages should use same container structure
-            assert isinstance(layout, dbc.Container), (
-                f"{page_name} should use dbc.Container"
-            )
+            assert isinstance(
+                layout, dbc.Container
+            ), f"{page_name} should use dbc.Container"
             assert layout.fluid is True, f"{page_name} should have fluid=True"
-            assert len(layout.children) == 3, (
-                f"{page_name} should have 3 top-level children"
-            )
+            assert (
+                len(layout.children) == 3
+            ), f"{page_name} should have 3 top-level children"
 
             # Check class name
             assert "p-4" in layout.className, f"{page_name} should have p-4 class"

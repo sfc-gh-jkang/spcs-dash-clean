@@ -160,6 +160,7 @@ def layout():
                                                 children=[
                                                     html.Div(id="table-preview-content")
                                                 ],
+                                                # Will be overridden based on theme by a callback
                                                 overlay_style={
                                                     "visibility": "visible",
                                                     "opacity": 0.7,
@@ -208,6 +209,12 @@ def layout():
                                                         ],
                                                     )
                                                 ],
+                                                # Will be overridden based on theme by a callback
+                                                overlay_style={
+                                                    "visibility": "visible",
+                                                    "opacity": 0.7,
+                                                    "backgroundColor": "white",
+                                                },
                                             )
                                         ]
                                     ),
@@ -301,6 +308,47 @@ def update_grid_theme(theme_data):
 
 
 @callback(
+    Output("table-preview-loading", "overlay_style"),
+    Input("theme-store", "data"),
+    prevent_initial_call=False,
+)
+def sync_preview_loading_overlay(theme_data):
+    """Match preview loading overlay to current theme (dark vs light)."""
+    is_dark = bool(theme_data and theme_data.get("current_theme") == "dark")
+    return {
+        "visibility": "visible",
+        "opacity": 0.7,
+        "backgroundColor": "rgba(15, 23, 42, 0.85)" if is_dark else "white",
+    }
+
+
+@callback(
+    Output("table-preview-wrapper", "className"),
+    Input("theme-store", "data"),
+    prevent_initial_call=False,
+)
+def sync_preview_grid_theme(theme_data):
+    """Switch preview grid theme class without reloading its data."""
+    is_dark = bool(theme_data and theme_data.get("current_theme") == "dark")
+    return "ag-theme-alpine-dark" if is_dark else "ag-theme-alpine"
+
+
+@callback(
+    Output("table-info-loading", "overlay_style"),
+    Input("theme-store", "data"),
+    prevent_initial_call=False,
+)
+def sync_info_loading_overlay(theme_data):
+    """Match info loading overlay to current theme (dark vs light)."""
+    is_dark = bool(theme_data and theme_data.get("current_theme") == "dark")
+    return {
+        "visibility": "visible",
+        "opacity": 0.7,
+        "backgroundColor": "rgba(15, 23, 42, 0.85)" if is_dark else "white",
+    }
+
+
+@callback(
     [
         Output("table-preview-content", "children"),
         Output("table-preview-header", "children"),
@@ -374,11 +422,18 @@ def update_table_preview(selected_rows):
 
         # Use the reusable format_query_results function with AG Grid
         if len(df) > 0:
+            # Render grid without embedding theme class; container will receive theme
             preview_content = format_query_results(
                 df,
                 max_rows=100,
                 grid_id=f"table-preview-grid-{table_name}",
                 theme="alpine",
+                apply_theme_on_container=True,
+            )
+
+            # Wrap with a stable wrapper whose class changes with theme only
+            preview_content = html.Div(
+                preview_content, id="table-preview-wrapper", className="ag-theme-alpine"
             )
 
             # Create enhanced table information

@@ -23,7 +23,13 @@ import dash_bootstrap_components as dbc  # noqa: E402
 import time  # noqa: E402
 from datetime import datetime, timezone  # noqa: E402
 import sys  # noqa: E402
-import pytz  # noqa: E402
+import pytz  # noqa: E402  # type: ignore[import-not-found]
+
+# Mypy: provide typing stubs if available (ignored at runtime)
+try:  # pragma: no cover
+    import types_pytz as _types_pytz  # type: ignore # noqa: F401
+except Exception:  # pragma: no cover
+    _types_pytz = None  # type: ignore
 
 # Import shared components
 from components.layout import create_theme_store  # noqa: E402
@@ -71,6 +77,28 @@ app = Dash(
 server = app.server  # Needed for deployment
 
 # Pages are automatically discovered by Dash using use_pages=True and pages_folder="pages"
+
+
+# Add basic security headers
+@server.after_request
+def add_security_headers(response):  # type: ignore[no-redef]
+    """Set minimal security headers for all responses."""
+    response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    # CSP tuned for Dash + fonts; relax connect-src for API calls
+    # Allow external CDNs (Bootstrap theme, Font Awesome, etc.)
+    csp = (
+        "default-src 'self' https:; "
+        "img-src 'self' data: blob: https:; "
+        "style-src 'self' 'unsafe-inline' https:; "
+        "font-src 'self' data: https:; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; "
+        "connect-src 'self' *; "
+        "frame-ancestors 'self'"
+    )
+    response.headers.setdefault("Content-Security-Policy", csp)
+    return response
 
 
 # Add dedicated health check endpoint for container orchestration
