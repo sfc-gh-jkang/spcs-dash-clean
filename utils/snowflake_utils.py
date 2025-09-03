@@ -13,6 +13,7 @@ from typing import Dict, Union, List
 from dash import html
 import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
+from typing import Optional
 
 # Suppress pkg_resources warnings before importing snowflake
 warnings.filterwarnings("ignore", message="pkg_resources is deprecated as an API.*")
@@ -41,7 +42,7 @@ def get_login_token():
         return f.read()
 
 
-def get_snowflake_session() -> Session:
+def get_snowflake_session() -> Optional[Session]:
     """Create a Snowflake session using environment variables."""
     try:
         if is_running_in_spcs():
@@ -87,7 +88,7 @@ def get_schema_objects() -> pd.DataFrame:
     try:
         # Query to get all tables and views from the specified schema
         query = """
-        SELECT 
+        SELECT
             table_name,
             table_type,
             row_count,
@@ -95,8 +96,8 @@ def get_schema_objects() -> pd.DataFrame:
             created,
             table_schema,
             table_catalog
-        FROM snowflake_sample_data.information_schema.tables 
-        WHERE table_schema = 'TPCH_SF10' 
+        FROM snowflake_sample_data.information_schema.tables
+        WHERE table_schema = 'TPCH_SF10'
         AND table_catalog = 'SNOWFLAKE_SAMPLE_DATA'
         ORDER BY table_name
         """
@@ -132,7 +133,7 @@ def get_table_data(table_name: str, limit: int = 1000) -> pd.DataFrame:
 
     try:
         query = f"""
-        SELECT * 
+        SELECT *
         FROM snowflake_sample_data.tpch_sf10.{table_name}
         LIMIT {limit}
         """

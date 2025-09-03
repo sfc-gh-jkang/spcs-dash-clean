@@ -44,4 +44,4 @@ ENTRYPOINT []
 
 # Activate the virtual environment and run the application
 RUN echo 'source /app/.venv/bin/activate' >> ~/.bashrc
-CMD ["/app/.venv/bin/python", "app.py"] 
+CMD ["/app/.venv/bin/python", "app.py"]

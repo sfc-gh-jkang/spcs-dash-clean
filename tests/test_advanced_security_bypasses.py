@@ -31,9 +31,9 @@ class TestAdvancedInjectionBypasses:
             result = _perform_additional_security_checks(
                 malicious_query.upper(), malicious_query
             )
-            assert result[
-                "error"
-            ], f"Failed to detect Unicode bypass: {malicious_query}"
+            assert result["error"], (
+                f"Failed to detect Unicode bypass: {malicious_query}"
+            )
 
     def test_encoding_based_bypasses(self):
         """Test encoding-based bypass attempts."""
@@ -70,9 +70,9 @@ class TestAdvancedInjectionBypasses:
             result = _perform_additional_security_checks(
                 malicious_query.upper(), malicious_query
             )
-            assert result[
-                "error"
-            ], f"Failed to detect whitespace bypass: {repr(malicious_query)}"
+            assert result["error"], (
+                f"Failed to detect whitespace bypass: {repr(malicious_query)}"
+            )
 
     def test_case_variation_bypasses(self):
         """Test case variation bypass attempts."""
@@ -104,9 +104,9 @@ class TestAdvancedInjectionBypasses:
             result = _perform_additional_security_checks(
                 malicious_query.upper(), malicious_query
             )
-            assert result[
-                "error"
-            ], f"Failed to detect comment bypass: {malicious_query}"
+            assert result["error"], (
+                f"Failed to detect comment bypass: {malicious_query}"
+            )
 
 
 @pytest.mark.security
@@ -142,9 +142,9 @@ class TestQueryValidationEdgeCases:
         result = _perform_additional_security_checks(
             exactly_10_levels.upper(), exactly_10_levels
         )
-        assert not result[
-            "error"
-        ], f"Should allow exactly 10 levels of nesting, got: {result['message']}"
+        assert not result["error"], (
+            f"Should allow exactly 10 levels of nesting, got: {result['message']}"
+        )
 
         # Test one over the limit (11 levels)
         over_limit = "SELECT * FROM users WHERE " + "(" * 11 + "id > 0" + ")" * 11
@@ -167,34 +167,34 @@ class TestQueryValidationEdgeCases:
         if remaining_chars > 0:
             exactly_10k += padding[:remaining_chars]
 
-        assert (
-            len(exactly_10k) == 10000
-        ), f"Expected 10,000 chars, got {len(exactly_10k)}"
+        assert len(exactly_10k) == 10000, (
+            f"Expected 10,000 chars, got {len(exactly_10k)}"
+        )
 
         result = _perform_additional_security_checks(exactly_10k.upper(), exactly_10k)
-        assert not result[
-            "error"
-        ], f"Should allow exactly 10,000 characters, got: {result['message']}"
+        assert not result["error"], (
+            f"Should allow exactly 10,000 characters, got: {result['message']}"
+        )
 
         # Test one character over (10,001 characters)
         over_limit = exactly_10k + "x"
         assert len(over_limit) == 10001, f"Expected 10,001 chars, got {len(over_limit)}"
 
         result = _perform_additional_security_checks(over_limit.upper(), over_limit)
-        assert result[
-            "error"
-        ], f"Should reject 10,001 characters, got: {result['message']}"
-        assert (
-            "too long" in result["message"]
-        ), f"Should mention length limit, got: {result['message']}"
+        assert result["error"], (
+            f"Should reject 10,001 characters, got: {result['message']}"
+        )
+        assert "too long" in result["message"], (
+            f"Should mention length limit, got: {result['message']}"
+        )
 
     def test_join_count_boundary_conditions(self):
         """Test exact boundary conditions for JOIN count."""
         # Test exactly 5 JOINs (at the limit)
         exactly_5_joins = """
-        SELECT * FROM table1 
+        SELECT * FROM table1
         JOIN table2 ON table1.id = table2.id
-        JOIN table3 ON table2.id = table3.id  
+        JOIN table3 ON table2.id = table3.id
         JOIN table4 ON table3.id = table4.id
         JOIN table5 ON table4.id = table5.id
         JOIN table6 ON table5.id = table6.id
@@ -240,9 +240,9 @@ class TestSchemaAccessValidation:
             result = _perform_additional_security_checks(
                 malicious_query.upper(), malicious_query
             )
-            assert result[
-                "error"
-            ], f"Should reject access to production schema: {malicious_query}"
+            assert result["error"], (
+                f"Should reject access to production schema: {malicious_query}"
+            )
 
     def test_information_schema_access_patterns(self):
         """Test various INFORMATION_SCHEMA access patterns."""
@@ -254,9 +254,9 @@ class TestSchemaAccessValidation:
 
         for query in allowed_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Should allow INFORMATION_SCHEMA access: {query}"
+            assert not result["error"], (
+                f"Should allow INFORMATION_SCHEMA access: {query}"
+            )
 
 
 @pytest.mark.security
@@ -273,9 +273,9 @@ class TestPerformanceAttackVectors:
 
         for query in dangerous_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert result[
-                "error"
-            ], f"Should detect potential Cartesian product: {query}"
+            assert result["error"], (
+                f"Should detect potential Cartesian product: {query}"
+            )
 
     def test_recursive_cte_detection(self):
         """Test detection of potentially dangerous recursive CTEs."""
@@ -356,7 +356,7 @@ class TestRegexExploitation:
             execution_time = time.time() - start_time
 
             # Should complete within 1 second (adjust threshold as needed)
-            assert (
-                execution_time < 1.0
-            ), f"Regex validation took too long: {execution_time}s"
+            assert execution_time < 1.0, (
+                f"Regex validation took too long: {execution_time}s"
+            )
             assert isinstance(result, dict), "Should return valid result structure"

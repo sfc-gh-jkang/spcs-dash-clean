@@ -1021,7 +1021,7 @@ def insert_common_query(*args):
     # Define the common queries
     queries = {
         "query-top-customers": """-- Top 10 Customers by Revenue
-SELECT 
+SELECT
     c.C_NAME as customer_name,
     c.C_MKTSEGMENT as market_segment,
     ROUND(SUM(o.O_TOTALPRICE), 2) as total_revenue,
@@ -1032,7 +1032,7 @@ GROUP BY c.C_CUSTKEY, c.C_NAME, c.C_MKTSEGMENT
 ORDER BY total_revenue DESC
 LIMIT 10;""",
         "query-sales-region": """-- Sales Performance by Region
-SELECT 
+SELECT
     r.R_NAME as region,
     n.N_NAME as nation,
     COUNT(DISTINCT o.O_ORDERKEY) as total_orders,
@@ -1045,7 +1045,7 @@ JOIN snowflake_sample_data.tpch_sf10.orders o ON c.C_CUSTKEY = o.O_CUSTKEY
 GROUP BY r.R_REGIONKEY, r.R_NAME, n.N_NATIONKEY, n.N_NAME
 ORDER BY total_revenue DESC;""",
         "query-product-performance": """-- Product Performance Analysis
-SELECT 
+SELECT
     p.P_NAME as product_name,
     p.P_TYPE as product_type,
     p.P_BRAND as brand,
@@ -1059,7 +1059,7 @@ GROUP BY p.P_PARTKEY, p.P_NAME, p.P_TYPE, p.P_BRAND
 ORDER BY total_revenue DESC
 LIMIT 20;""",
         "query-monthly-trends": """-- Monthly Sales Trends
-SELECT 
+SELECT
     YEAR(o.O_ORDERDATE) as order_year,
     MONTH(o.O_ORDERDATE) as order_month,
     COUNT(DISTINCT o.O_ORDERKEY) as total_orders,
@@ -1067,12 +1067,12 @@ SELECT
     ROUND(AVG(o.O_TOTALPRICE), 2) as avg_order_value,
     COUNT(DISTINCT o.O_CUSTKEY) as unique_customers
 FROM snowflake_sample_data.tpch_sf10.orders o
-WHERE o.O_ORDERDATE >= '1995-01-01' 
+WHERE o.O_ORDERDATE >= '1995-01-01'
     AND o.O_ORDERDATE < '1997-01-01'
 GROUP BY YEAR(o.O_ORDERDATE), MONTH(o.O_ORDERDATE)
 ORDER BY order_year, order_month;""",
         "query-customer-ltv": """-- Customer Lifetime Value Analysis
-SELECT 
+SELECT
     c.C_MKTSEGMENT as market_segment,
     COUNT(DISTINCT c.C_CUSTKEY) as customer_count,
     ROUND(AVG(customer_totals.lifetime_value), 2) as avg_lifetime_value,
@@ -1080,7 +1080,7 @@ SELECT
     ROUND(MAX(customer_totals.lifetime_value), 2) as max_lifetime_value,
     ROUND(AVG(customer_totals.order_count), 1) as avg_orders_per_customer
 FROM (
-    SELECT 
+    SELECT
         c.C_CUSTKEY,
         c.C_MKTSEGMENT,
         SUM(o.O_TOTALPRICE) as lifetime_value,
@@ -1093,18 +1093,18 @@ JOIN snowflake_sample_data.tpch_sf10.customer c ON customer_totals.C_CUSTKEY = c
 GROUP BY c.C_MKTSEGMENT
 ORDER BY avg_lifetime_value DESC;""",
         "query-order-frequency": """-- Customer Order Frequency Analysis
-SELECT 
+SELECT
     order_frequency_bucket,
     COUNT(*) as customer_count,
     ROUND(AVG(total_spent), 2) as avg_total_spent,
     ROUND(AVG(avg_order_value), 2) as avg_order_value
 FROM (
-    SELECT 
+    SELECT
         c.C_CUSTKEY,
         COUNT(o.O_ORDERKEY) as order_count,
         SUM(o.O_TOTALPRICE) as total_spent,
         AVG(o.O_TOTALPRICE) as avg_order_value,
-        CASE 
+        CASE
             WHEN COUNT(o.O_ORDERKEY) = 1 THEN '1 Order'
             WHEN COUNT(o.O_ORDERKEY) BETWEEN 2 AND 5 THEN '2-5 Orders'
             WHEN COUNT(o.O_ORDERKEY) BETWEEN 6 AND 10 THEN '6-10 Orders'
@@ -1115,7 +1115,7 @@ FROM (
     GROUP BY c.C_CUSTKEY
 ) customer_analysis
 GROUP BY order_frequency_bucket
-ORDER BY 
+ORDER BY
     CASE order_frequency_bucket
         WHEN '1 Order' THEN 1
         WHEN '2-5 Orders' THEN 2
@@ -1123,7 +1123,7 @@ ORDER BY
         ELSE 4
     END;""",
         "query-browse-customers": """-- Browse Customer Table Structure and Sample Data
-SELECT 
+SELECT
     C_CUSTKEY as customer_key,
     C_NAME as customer_name,
     C_ADDRESS as address,
@@ -1132,11 +1132,11 @@ SELECT
     C_ACCTBAL as account_balance,
     C_MKTSEGMENT as market_segment,
     C_COMMENT as comment
-FROM snowflake_sample_data.tpch_sf10.customer 
+FROM snowflake_sample_data.tpch_sf10.customer
 ORDER BY C_CUSTKEY
 LIMIT 50;""",
         "query-browse-orders": """-- Browse Orders Table Structure and Sample Data
-SELECT 
+SELECT
     O_ORDERKEY as order_key,
     O_CUSTKEY as customer_key,
     O_ORDERSTATUS as order_status,
@@ -1145,18 +1145,18 @@ SELECT
     O_ORDERPRIORITY as order_priority,
     O_CLERK as clerk,
     O_SHIPPRIORITY as ship_priority
-FROM snowflake_sample_data.tpch_sf10.orders 
+FROM snowflake_sample_data.tpch_sf10.orders
 ORDER BY O_ORDERDATE DESC
 LIMIT 50;""",
         "query-table-info": """-- Show Information About Available Tables
-SELECT 
+SELECT
     table_schema,
     table_name,
     table_type,
     row_count,
     bytes,
     created
-FROM snowflake_sample_data.information_schema.tables 
+FROM snowflake_sample_data.information_schema.tables
 WHERE table_schema = 'TPCH_SF10'
     AND table_type = 'BASE TABLE'
 ORDER BY table_name;""",

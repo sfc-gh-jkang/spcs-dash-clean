@@ -187,7 +187,7 @@ docker-compose run --rm spcs-dash-app /bin/bash
 CREATE OR REPLACE ROLE fullstack_service_role;
 CREATE OR REPLACE USER fullstack_user
     PASSWORD = '<secure_password>'
-    DEFAULT_WAREHOUSE = 'fullstack_wh' 
+    DEFAULT_WAREHOUSE = 'fullstack_wh'
     DEFAULT_ROLE = 'fullstack_service_role';
 
 -- Create infrastructure
@@ -207,11 +207,11 @@ CREATE COMPUTE POOL fullstack_compute_pool
 
 -- Grant permissions
 GRANT OWNERSHIP ON DATABASE fullstack_db TO ROLE fullstack_service_role COPY CURRENT GRANTS;
-GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE fullstack_service_role; 
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE fullstack_service_role;
 GRANT USAGE, MONITOR ON COMPUTE POOL fullstack_compute_pool TO ROLE fullstack_service_role;
 GRANT USAGE ON WAREHOUSE fullstack_wh TO ROLE fullstack_service_role;
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE fullstack_service_role;
-GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE fullstack_service_role; 
+GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE fullstack_service_role;
 GRANT ROLE fullstack_service_role TO ROLE ACCOUNTADMIN;
 ```
 
@@ -219,7 +219,7 @@ GRANT ROLE fullstack_service_role TO ROLE ACCOUNTADMIN;
 
 ```sql
 -- Mount sample data share
-CREATE DATABASE IDENTIFIER('SNOWFLAKE_SAMPLE_DATA') 
+CREATE DATABASE IDENTIFIER('SNOWFLAKE_SAMPLE_DATA')
 FROM SHARE IDENTIFIER('SFC_SAMPLES."SAMPLE_DATA"');
 ```
 
@@ -246,7 +246,7 @@ DIRECTORY = ( ENABLE = true );
 
 ### Enable access to External Resources
 
-Our application uses external stylesheets. 
+Our application uses external stylesheets.
 We will need to permit our service to access these external resources. Permitting access to external resources requires two steps:
 
 * Create a NETWORK RULE which allows egress on a specified port to a domain name.
@@ -487,7 +487,7 @@ curl -s http://localhost:8000/health | python3 -m json.tool
 - **Regularly rotate passwords** and use strong authentication
 - **Network security** - ensure secure connections to Snowflake
 
-### SPCS Deployment  
+### SPCS Deployment
 - **No stored credentials** - service uses automatic token authentication
 - **Network isolation** - access controlled by Snowflake's security model
 - **Private endpoints** - consider using for sensitive data access
@@ -587,14 +587,14 @@ This approach:
 Note: Make sure you have a `.env` file with your Snowflake credentials before running locally.
 
 **SPCS Deployment Issues:**
-- Check service status: 
+- Check service status:
 ```sql
 DESCRIBE SERVICE fullstack_db.application.dash_app_service;
 SHOW SERVICE CONTAINERS IN SERVICE fullstack_db.application.dash_app_service;
 SHOW ENDPOINTS IN SERVICE fullstack_db.application.dash_app_service;
 select * FROM TABLE(fullstack_db.application.dash_app_service!SPCS_GET_LOGS());
 ```
-- View service logs: 
+- View service logs:
 ```sql
 SELECT value AS log_line
   FROM TABLE(
@@ -689,7 +689,7 @@ docker-compose run --rm spcs-dash-app /bin/bash
    ```bash
    # Build production image
    docker build --platform linux/amd64 -t spcs-dash-app:latest .
-   
+
    # Test production build locally
    docker run -p 8000:8000 spcs-dash-app:latest
    ```
@@ -706,7 +706,7 @@ docker-compose run --rm spcs-dash-app /bin/bash
    ```sql
    -- Check service health
    SELECT SYSTEM$GET_SERVICE_STATUS('fullstack_db.application.dash_app_service');
-   
+
    -- View application logs
    SELECT SYSTEM$GET_SERVICE_LOGS('fullstack_db.application.dash_app_service', '0', 'dash-app', 100);
    ```
@@ -857,7 +857,7 @@ uv run pytest -k "not concurrent" -v
 ```
 ✅ 47 passed, 1 skipped, 2 deselected    # Main security test suite (excluding concurrent tests)
 ✅ Core functionality tests available    # Unit tests for snowflake_utils
-✅ Integration tests available           # End-to-end workflows  
+✅ Integration tests available           # End-to-end workflows
 ✅ Stress tests available               # Performance validation
 
 📊 Total: 50+ focused security test cases (additional tests in development)
@@ -940,11 +940,11 @@ For automated testing in CI/CD pipelines:
   run: |
     uv sync --group test
     uv run pytest tests/ -k "not concurrent" --tb=short -q
-    
+
 - name: Security Tests
   run: |
     uv run pytest tests/test_security.py -v
-    
+
 - name: Coverage Report
   run: |
     uv run pytest tests/ --cov=utils --cov-report=xml
@@ -971,7 +971,7 @@ For automated testing in CI/CD pipelines:
 
 **Required for all contributions:**
 - ✅ All tests must pass (see [Testing](#-testing) section)
-- ✅ Security validation must pass 
+- ✅ Security validation must pass
 - ✅ Code must be properly linted
 - ✅ New features should include appropriate tests
 
@@ -983,4 +983,4 @@ This project is licensed under the MIT License.
 
 - **Repository**: https://github.com/sfc-gh-jkang/spcs-dash-clean
 - **Snowflake Container Services**: [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services)
-- **Dash Framework**: [Documentation](https://dash.plotly.com/) 
+- **Dash Framework**: [Documentation](https://dash.plotly.com/)

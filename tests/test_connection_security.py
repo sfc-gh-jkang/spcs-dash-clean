@@ -299,9 +299,9 @@ class TestInputValidationSecurity:
 
         for query in null_byte_queries:
             result = execute_query(query)
-            assert (
-                "error" in result.columns
-            ), f"Should reject null byte query: {repr(query)}"
+            assert "error" in result.columns, (
+                f"Should reject null byte query: {repr(query)}"
+            )
 
     def test_control_character_injection(self):
         """Test handling of control character injection."""

@@ -16,25 +16,25 @@ services:
     environment:
       # Snowflake configuration (loaded from .env file)
       - SNOWFLAKE_ACCOUNT
-      - SNOWFLAKE_USER  
+      - SNOWFLAKE_USER
       - SNOWFLAKE_PASSWORD
       - SNOWFLAKE_WAREHOUSE
       - SNOWFLAKE_DATABASE
       - SNOWFLAKE_SCHEMA
-      
+
       # Python/Dash configuration
       - PYTHONUNBUFFERED=1
       - DASH_DEBUG
-    
+
     # For development: mount source code to enable live reloading
     # Comment out for production
     volumes:
       - .:/app
       - /app/.venv  # Exclude virtual environment from bind mount
-    
+
     # Restart policy
     restart: unless-stopped
-    
+
     # Health check - using dedicated health endpoint
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -42,7 +42,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    
+
     # Network configuration
     networks:
       - levelup-network
@@ -55,4 +55,4 @@ networks:
 # Optional: Define volumes for persistent data
 volumes:
   uv-cache:
-    driver: local 
+    driver: local

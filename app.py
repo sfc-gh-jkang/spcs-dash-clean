@@ -210,7 +210,7 @@ app.index_string = """<!DOCTYPE html>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/assets/styles.css">
+        <link rel="stylesheet" href="/static/styles.css">
     </head>
     <body>
         {%app_entry%}
@@ -228,7 +228,7 @@ app.clientside_callback(
     function(theme_data) {
         // Remove all theme classes
         document.body.classList.remove('light-theme', 'dark-theme');
-        
+
         if (theme_data) {
             const theme = theme_data.current_theme;
             if (theme === 'light') {

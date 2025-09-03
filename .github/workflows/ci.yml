@@ -22,5 +22,3 @@ jobs:
           uv run ruff check .
       - name: Tests
         run: uv run pytest -q --maxfail=1 --disable-warnings
-
-

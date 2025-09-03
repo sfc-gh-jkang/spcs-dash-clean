@@ -29,9 +29,9 @@ class TestLegitimateBasicQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate query blocked: {query} - {result['message']}"
+            )
 
     def test_where_clause_queries(self):
         """Test SELECT queries with legitimate WHERE clauses."""
@@ -50,9 +50,9 @@ class TestLegitimateBasicQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate WHERE query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate WHERE query blocked: {query} - {result['message']}"
+            )
 
     def test_ordering_and_grouping_queries(self):
         """Test queries with ORDER BY, GROUP BY, and HAVING clauses."""
@@ -68,9 +68,9 @@ class TestLegitimateBasicQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate ordering/grouping query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate ordering/grouping query blocked: {query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -88,9 +88,9 @@ class TestLegitimateJoinQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate INNER JOIN blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate INNER JOIN blocked: {query} - {result['message']}"
+            )
 
     def test_outer_join_queries(self):
         """Test legitimate OUTER JOIN queries."""
@@ -103,22 +103,22 @@ class TestLegitimateJoinQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate OUTER JOIN blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate OUTER JOIN blocked: {query} - {result['message']}"
+            )
 
     def test_multiple_join_queries(self):
         """Test queries with multiple legitimate JOINs (within our 5 JOIN limit)."""
         legitimate_queries = [
-            """SELECT u.name, o.total, i.name, c.category 
-               FROM users u 
-               JOIN orders o ON u.id = o.user_id 
-               JOIN items i ON o.item_id = i.id 
+            """SELECT u.name, o.total, i.name, c.category
+               FROM users u
+               JOIN orders o ON u.id = o.user_id
+               JOIN items i ON o.item_id = i.id
                JOIN categories c ON i.category_id = c.id""",
-            """SELECT e.name, d.dept_name, p.project_name, l.location 
-               FROM employees e 
-               LEFT JOIN departments d ON e.dept_id = d.id 
-               LEFT JOIN projects p ON e.id = p.lead_id 
+            """SELECT e.name, d.dept_name, p.project_name, l.location
+               FROM employees e
+               LEFT JOIN departments d ON e.dept_id = d.id
+               LEFT JOIN projects p ON e.id = p.lead_id
                LEFT JOIN locations l ON d.location_id = l.id""",
         ]
 
@@ -128,9 +128,9 @@ class TestLegitimateJoinQueries:
             result = _perform_additional_security_checks(
                 clean_query.upper(), clean_query
             )
-            assert not result[
-                "error"
-            ], f"Legitimate multiple JOIN blocked: {clean_query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate multiple JOIN blocked: {clean_query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -151,9 +151,9 @@ class TestLegitimateAggregateQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate aggregate query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate aggregate query blocked: {query} - {result['message']}"
+            )
 
     def test_window_functions(self):
         """Test legitimate window function queries."""
@@ -166,9 +166,9 @@ class TestLegitimateAggregateQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate window function blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate window function blocked: {query} - {result['message']}"
+            )
 
     def test_date_time_functions(self):
         """Test legitimate date and time function queries."""
@@ -182,9 +182,9 @@ class TestLegitimateAggregateQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate date/time query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate date/time query blocked: {query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -203,9 +203,9 @@ class TestLegitimateInformationSchemaQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate INFORMATION_SCHEMA query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate INFORMATION_SCHEMA query blocked: {query} - {result['message']}"
+            )
 
     def test_snowflake_sample_data_queries(self):
         """Test legitimate queries against SNOWFLAKE_SAMPLE_DATA."""
@@ -218,9 +218,9 @@ class TestLegitimateInformationSchemaQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate SNOWFLAKE_SAMPLE_DATA query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate SNOWFLAKE_SAMPLE_DATA query blocked: {query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -238,9 +238,9 @@ class TestLegitimateComplexQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate subquery blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate subquery blocked: {query} - {result['message']}"
+            )
 
     def test_cte_patterns(self):
         """Test legitimate Common Table Expression (CTE) patterns."""
@@ -251,11 +251,11 @@ class TestLegitimateComplexQueries:
                )
                SELECT year, month, total_sales FROM monthly_sales ORDER BY year, month""",
             """WITH top_customers AS (
-                 SELECT customer_id, SUM(total) AS total_spent 
-                 FROM orders GROUP BY customer_id 
+                 SELECT customer_id, SUM(total) AS total_spent
+                 FROM orders GROUP BY customer_id
                  ORDER BY total_spent DESC LIMIT 10
                )
-               SELECT c.name, tc.total_spent 
+               SELECT c.name, tc.total_spent
                FROM customers c JOIN top_customers tc ON c.id = tc.customer_id""",
         ]
 
@@ -265,9 +265,9 @@ class TestLegitimateComplexQueries:
             result = _perform_additional_security_checks(
                 clean_query.upper(), clean_query
             )
-            assert not result[
-                "error"
-            ], f"Legitimate CTE blocked: {clean_query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate CTE blocked: {clean_query} - {result['message']}"
+            )
 
     def test_case_when_patterns(self):
         """Test legitimate CASE WHEN patterns."""
@@ -280,9 +280,9 @@ class TestLegitimateComplexQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate CASE WHEN blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate CASE WHEN blocked: {query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -300,9 +300,9 @@ class TestLegitimateQueryEdgeCases:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate quoted identifier query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate quoted identifier query blocked: {query} - {result['message']}"
+            )
 
     def test_string_literals_with_special_chars(self):
         """Test legitimate queries with string literals containing special characters."""
@@ -316,9 +316,9 @@ class TestLegitimateQueryEdgeCases:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate string literal query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate string literal query blocked: {query} - {result['message']}"
+            )
 
     def test_numeric_expressions(self):
         """Test legitimate queries with numeric expressions."""
@@ -332,9 +332,9 @@ class TestLegitimateQueryEdgeCases:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Legitimate numeric expression blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Legitimate numeric expression blocked: {query} - {result['message']}"
+            )
 
     def test_legitimate_long_queries(self):
         """Test legitimate but long queries that should not be blocked."""
@@ -343,14 +343,14 @@ class TestLegitimateQueryEdgeCases:
         long_select = f"SELECT {', '.join(columns)} FROM large_table WHERE id > 0"
 
         # Ensure it's under our 10,000 character limit
-        assert (
-            len(long_select) < 10000
-        ), f"Test query too long: {len(long_select)} chars"
+        assert len(long_select) < 10000, (
+            f"Test query too long: {len(long_select)} chars"
+        )
 
         result = _perform_additional_security_checks(long_select.upper(), long_select)
-        assert not result[
-            "error"
-        ], f"Legitimate long query blocked: {long_select[:100]}... - {result['message']}"
+        assert not result["error"], (
+            f"Legitimate long query blocked: {long_select[:100]}... - {result['message']}"
+        )
 
 
 @pytest.mark.integration
@@ -370,12 +370,12 @@ class TestLegitimateQueryExecution:
             result = _validate_query_safety(query, max_rows=1000)
 
             # Should not have security errors
-            assert not result.get(
-                "error", False
-            ), f"Query should pass security validation: {query} - {result.get('message', '')}"
-            assert (
-                "safe_query" in result
-            ), f"Query should have safe_query field: {query}"
+            assert not result.get("error", False), (
+                f"Query should pass security validation: {query} - {result.get('message', '')}"
+            )
+            assert "safe_query" in result, (
+                f"Query should have safe_query field: {query}"
+            )
 
 
 @pytest.mark.security
@@ -395,9 +395,9 @@ class TestFalsePositivePrevention:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Business term query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Business term query blocked: {query} - {result['message']}"
+            )
 
     def test_mathematical_expressions_not_blocked(self):
         """Test that mathematical expressions are not incorrectly flagged."""
@@ -411,9 +411,9 @@ class TestFalsePositivePrevention:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Mathematical expression blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Mathematical expression blocked: {query} - {result['message']}"
+            )
 
     def test_comparison_operators_not_blocked(self):
         """Test that legitimate comparison operators are not flagged."""
@@ -427,9 +427,9 @@ class TestFalsePositivePrevention:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Comparison operator query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Comparison operator query blocked: {query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -450,9 +450,9 @@ class TestLegitimateAdvancedQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Advanced window function blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Advanced window function blocked: {query} - {result['message']}"
+            )
 
     def test_advanced_analytical_functions(self):
         """Test analytical functions commonly used in business intelligence."""
@@ -466,9 +466,9 @@ class TestLegitimateAdvancedQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Analytical function blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Analytical function blocked: {query} - {result['message']}"
+            )
 
     def test_pivot_and_unpivot_operations(self):
         """Test simpler aggregation operations that achieve similar results to PIVOT/UNPIVOT."""
@@ -480,21 +480,21 @@ class TestLegitimateAdvancedQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Aggregation operation blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Aggregation operation blocked: {query} - {result['message']}"
+            )
 
     def test_legitimate_cte_use(self):
         """Test legitimate non-recursive CTE patterns."""
         legitimate_queries = [
             """WITH employee_summary AS (
-                SELECT department, COUNT(*) as emp_count, AVG(salary) as avg_salary 
-                FROM employees 
+                SELECT department, COUNT(*) as emp_count, AVG(salary) as avg_salary
+                FROM employees
                 GROUP BY department
             ) SELECT * FROM employee_summary WHERE emp_count > 5""",
             """WITH monthly_totals AS (
                 SELECT EXTRACT(month FROM sale_date) as month, SUM(amount) as total
-                FROM sales 
+                FROM sales
                 WHERE sale_date >= '2023-01-01'
                 GROUP BY month
             ) SELECT month, total FROM monthly_totals ORDER BY total DESC""",
@@ -527,9 +527,9 @@ class TestLegitimateModernSQLFeatures:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Array/Object operation blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Array/Object operation blocked: {query} - {result['message']}"
+            )
 
     def test_simple_text_processing(self):
         """Test simple text operations that don't trigger security restrictions."""
@@ -543,9 +543,9 @@ class TestLegitimateModernSQLFeatures:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Simple text query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Simple text query blocked: {query} - {result['message']}"
+            )
 
     def test_time_series_functions(self):
         """Test time series and date/time functions."""
@@ -560,9 +560,9 @@ class TestLegitimateModernSQLFeatures:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Time series function blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Time series function blocked: {query} - {result['message']}"
+            )
 
     def test_geospatial_functions(self):
         """Test geospatial and geographic functions."""
@@ -576,9 +576,9 @@ class TestLegitimateModernSQLFeatures:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Geospatial function blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Geospatial function blocked: {query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -597,9 +597,9 @@ class TestLegitimateDataQualityQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Data profiling query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Data profiling query blocked: {query} - {result['message']}"
+            )
 
     def test_data_validation_queries(self):
         """Test data validation and constraint checking queries."""
@@ -614,9 +614,9 @@ class TestLegitimateDataQualityQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Data validation query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Data validation query blocked: {query} - {result['message']}"
+            )
 
     def test_data_monitoring_queries(self):
         """Test queries used for data monitoring and alerting."""
@@ -629,9 +629,9 @@ class TestLegitimateDataQualityQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Data monitoring query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Data monitoring query blocked: {query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -650,9 +650,9 @@ class TestLegitimateBusinessIntelligenceQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Sales analytics query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Sales analytics query blocked: {query} - {result['message']}"
+            )
 
     def test_customer_analytics_queries(self):
         """Test customer behavior and segmentation queries."""
@@ -665,9 +665,9 @@ class TestLegitimateBusinessIntelligenceQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Customer analytics query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Customer analytics query blocked: {query} - {result['message']}"
+            )
 
     def test_operational_analytics_queries(self):
         """Test operational and performance analytics queries."""
@@ -680,9 +680,9 @@ class TestLegitimateBusinessIntelligenceQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Operational analytics query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Operational analytics query blocked: {query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -692,20 +692,20 @@ class TestLegitimateComplexBusinessQueries:
     def test_multi_table_reporting_queries(self):
         """Test complex reporting queries across multiple tables."""
         legitimate_queries = [
-            """SELECT 
-                c.customer_name, 
+            """SELECT
+                c.customer_name,
                 COUNT(o.order_id) as total_orders,
                 SUM(oi.quantity * p.unit_price) as total_spent,
                 AVG(r.rating) as avg_rating
             FROM customers c
-            LEFT JOIN orders o ON c.customer_id = o.customer_id  
+            LEFT JOIN orders o ON c.customer_id = o.customer_id
             LEFT JOIN order_items oi ON o.order_id = oi.order_id
             LEFT JOIN products p ON oi.product_id = p.product_id
             LEFT JOIN reviews r ON c.customer_id = r.customer_id
             WHERE o.order_date >= CURRENT_DATE() - INTERVAL 365 DAY
             GROUP BY c.customer_id, c.customer_name
             HAVING COUNT(o.order_id) > 0""",
-            """SELECT 
+            """SELECT
                 p.product_name,
                 c.category_name,
                 SUM(s.quantity_sold) as total_sold,
@@ -721,42 +721,42 @@ class TestLegitimateComplexBusinessQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Multi-table reporting query blocked: {query[:100]}... - {result['message']}"
+            assert not result["error"], (
+                f"Multi-table reporting query blocked: {query[:100]}... - {result['message']}"
+            )
 
     def test_financial_reporting_queries(self):
         """Test financial and accounting queries."""
         legitimate_queries = [
-            """SELECT 
+            """SELECT
                 account_type,
                 SUM(CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END) as total_debits,
                 SUM(CASE WHEN transaction_type = 'credit' THEN amount ELSE 0 END) as total_credits,
                 SUM(CASE WHEN transaction_type = 'debit' THEN amount ELSE -amount END) as net_balance
-            FROM accounting_transactions 
+            FROM accounting_transactions
             WHERE transaction_date BETWEEN '2023-01-01' AND '2023-12-31'
             GROUP BY account_type""",
-            """SELECT 
+            """SELECT
                 fiscal_quarter,
                 revenue,
                 expenses,
                 revenue - expenses as net_income,
                 (revenue - expenses) / revenue * 100 as profit_margin_percent
-            FROM quarterly_financials 
+            FROM quarterly_financials
             WHERE fiscal_year = 2023
             ORDER BY fiscal_quarter""",
         ]
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Financial reporting query blocked: {query[:100]}... - {result['message']}"
+            assert not result["error"], (
+                f"Financial reporting query blocked: {query[:100]}... - {result['message']}"
+            )
 
     def test_inventory_management_queries(self):
         """Test inventory and supply chain queries."""
         legitimate_queries = [
-            """SELECT 
+            """SELECT
                 p.product_id,
                 p.product_name,
                 i.current_stock,
@@ -766,12 +766,12 @@ class TestLegitimateComplexBusinessQueries:
             FROM products p
             JOIN inventory i ON p.product_id = i.product_id
             LEFT JOIN (
-                SELECT product_id, AVG(quantity_sold) as daily_sales 
-                FROM daily_sales 
-                WHERE sale_date >= CURRENT_DATE() - INTERVAL 30 DAY 
+                SELECT product_id, AVG(quantity_sold) as daily_sales
+                FROM daily_sales
+                WHERE sale_date >= CURRENT_DATE() - INTERVAL 30 DAY
                 GROUP BY product_id
             ) s ON p.product_id = s.product_id""",
-            """SELECT 
+            """SELECT
                 warehouse_location,
                 product_category,
                 SUM(quantity_on_hand) as total_inventory,
@@ -785,9 +785,9 @@ class TestLegitimateComplexBusinessQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Inventory management query blocked: {query[:100]}... - {result['message']}"
+            assert not result["error"], (
+                f"Inventory management query blocked: {query[:100]}... - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -805,9 +805,9 @@ class TestLegitimatePerformanceOptimizedQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Materialized view query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Materialized view query blocked: {query} - {result['message']}"
+            )
 
     def test_clustered_table_queries(self):
         """Test queries optimized for clustered tables."""
@@ -820,9 +820,9 @@ class TestLegitimatePerformanceOptimizedQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Clustered table query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Clustered table query blocked: {query} - {result['message']}"
+            )
 
     def test_partitioned_table_queries(self):
         """Test queries that leverage table partitioning."""
@@ -835,9 +835,9 @@ class TestLegitimatePerformanceOptimizedQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Partitioned table query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Partitioned table query blocked: {query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -859,9 +859,9 @@ class TestLegitimateEdgeCaseQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Special characters query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Special characters query blocked: {query} - {result['message']}"
+            )
 
     def test_unicode_content_queries(self):
         """Test queries with legitimate Unicode content."""
@@ -876,9 +876,9 @@ class TestLegitimateEdgeCaseQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Unicode content query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Unicode content query blocked: {query} - {result['message']}"
+            )
 
     def test_case_sensitivity_patterns(self):
         """Test case sensitivity and mixed case patterns."""
@@ -891,20 +891,20 @@ class TestLegitimateEdgeCaseQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Case sensitivity query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Case sensitivity query blocked: {query} - {result['message']}"
+            )
 
     def test_whitespace_variations(self):
         """Test queries with various whitespace patterns."""
         legitimate_queries = [
             "SELECT   *   FROM   users   WHERE   id   =   123",
-            """SELECT 
+            """SELECT
                 customer_id,
-                order_total 
-            FROM 
-                orders 
-            WHERE 
+                order_total
+            FROM
+                orders
+            WHERE
                 status = 'active'""",
             "SELECT\tcustomer_name\tFROM\tcustomers",
             "SELECT * FROM products\nWHERE price > 100\nORDER BY price",
@@ -912,9 +912,9 @@ class TestLegitimateEdgeCaseQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Whitespace variation query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Whitespace variation query blocked: {query} - {result['message']}"
+            )
 
 
 @pytest.mark.security
@@ -933,9 +933,9 @@ class TestLegitimateSnowflakeSpecificQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Snowflake system function blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Snowflake system function blocked: {query} - {result['message']}"
+            )
 
     def test_snowflake_sample_data_queries(self):
         """Test queries using allowed Snowflake sample data."""
@@ -948,9 +948,9 @@ class TestLegitimateSnowflakeSpecificQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Sample data query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Sample data query blocked: {query} - {result['message']}"
+            )
 
     def test_basic_data_selection_queries(self):
         """Test simple data selection queries without complex operations."""
@@ -964,9 +964,9 @@ class TestLegitimateSnowflakeSpecificQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Basic selection query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Basic selection query blocked: {query} - {result['message']}"
+            )
 
     def test_snowflake_time_travel_queries(self):
         """Test Time Travel queries (without modification)."""
@@ -979,6 +979,6 @@ class TestLegitimateSnowflakeSpecificQueries:
 
         for query in legitimate_queries:
             result = _perform_additional_security_checks(query.upper(), query)
-            assert not result[
-                "error"
-            ], f"Time Travel query blocked: {query} - {result['message']}"
+            assert not result["error"], (
+                f"Time Travel query blocked: {query} - {result['message']}"
+            )

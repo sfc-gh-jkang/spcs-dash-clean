@@ -22,9 +22,10 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.12.5",
+    "ruff>=0.12.8",
     "pre-commit>=3.7.0",
     "types-pytz>=2025.1.0.0",
+    "mypy>=1.17.1",
 ]
 test = [
     "pytest>=8.0.0",
@@ -53,13 +54,13 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = [
-    "-v", 
+    "-v",
     "--tb=short",
     "--disable-warnings"
 ]
 markers = [
     "unit: Unit tests",
-    "integration: Integration tests", 
+    "integration: Integration tests",
     "security: Security validation tests",
     "stress: Stress and performance tests",
     "slow: Tests that take longer to run"
