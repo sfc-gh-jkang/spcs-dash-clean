@@ -998,7 +998,7 @@ SKIP=entro-secret-scan git commit -m "commit message"
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the Apache License, Version 2.0. See the `LICENSE` file for details.
 
 ## 🔗 Links
 
