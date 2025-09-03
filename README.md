@@ -975,6 +975,20 @@ For automated testing in CI/CD pipelines:
 - ✅ Code must be properly linted
 - ✅ New features should include appropriate tests
 
+# For development
+- to push to gitlab:
+```
+git add .
+git commit -m 'add message'
+git push gitlab-origin main
+```
+- to push to github:
+```
+git add .
+git commit -m 'add message'
+git push origin main
+```
+
 ## 📄 License
 
 This project is licensed under the MIT License.
