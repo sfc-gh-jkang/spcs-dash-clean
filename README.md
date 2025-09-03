@@ -989,6 +989,13 @@ git commit -m 'add message'
 git push origin main
 ```
 
+- To skip entro-secret-scan when it has a false positive: https://snowflakecomputing.atlassian.net/wiki/spaces/CITS/pages/4570218497/Entro+Security+Pre-commit+hook+setup+guide
+How and when to bypass the pre-commit hook:
+Like any other secret detection tool, Entro is not completely perfect tool and sometimes detects non-secret key words as secrets or invalid secrets as actual secrets. In these scenarios, developers will need to bypass the pre-commit hook first and then ignore the secret leak incident in the Entro portal. Command to bypass the Entro pre-commit hook:
+```
+SKIP=entro-secret-scan git commit -m "commit message"
+```
+
 ## 📄 License
 
 This project is licensed under the MIT License.
