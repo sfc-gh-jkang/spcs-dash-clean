@@ -28,6 +28,7 @@ dev = [
     "types-pytz>=2025.1.0.0",
     "mypy>=1.17.1",
     "rumdl>=0.0.136",
+    "pysentry-rs>=0.3.7",
 ]
 test = [
     "pytest>=8.0.0",

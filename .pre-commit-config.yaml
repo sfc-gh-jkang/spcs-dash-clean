@@ -53,6 +53,11 @@ repos:
     hooks:
       - id: rumdl
         args: ["--disable", "MD013","--fix"]
+  # Pysentry to check for secrets
+  - repo: https://github.com/pysentry/pysentry-pre-commit
+    rev: v0.3.7
+    hooks:
+      - id: pysentry
   # Local hooks (optional)
   - repo: local
     hooks:

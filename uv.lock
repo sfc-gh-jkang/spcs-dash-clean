@@ -1284,6 +1284,16 @@ wheels = [
 ]
 
 [[package]]
+name = "pysentry-rs"
+version = "0.3.7"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f2/f4/0abdb37769c046cd95d1ad8bfad52ae2d93bb8ca1d9c8ee1d748032d3e4f/pysentry_rs-0.3.7.tar.gz", hash = "sha256:cfed3aa2baf2b77fd3222b3e4868603cdeac2afcc736f4dab7c859798fb93844", size = 345948, upload-time = "2025-08-27T10:49:48.422Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a9/01/0db6f7d15b025a89469caf3045e8c1dfc699c78102a4615321c57764a8ea/pysentry_rs-0.3.7-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:bea80ac7437c9645874b63eda91812625cffb8b90670bb3727e40a2919a4824b", size = 4233908, upload-time = "2025-08-27T10:49:38.143Z" },
+    { url = "https://files.pythonhosted.org/packages/ad/c8/1bd0108366e90c712f8fe12caee3fa01d8749f1db6f1860da57d1ec66d91/pysentry_rs-0.3.7-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0b2041d3d902d434e8bfa91e3e280a0d87fef35fe4b7623bae3b6d398753d0b1", size = 4892855, upload-time = "2025-08-27T10:49:39.531Z" },
+]
+
+[[package]]
 name = "pytest"
 version = "8.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1785,6 +1795,7 @@ dependencies = [
 dev = [
     { name = "mypy" },
     { name = "pre-commit" },
+    { name = "pysentry-rs" },
     { name = "ruff" },
     { name = "rumdl" },
     { name = "types-pytz" },
@@ -1813,6 +1824,7 @@ requires-dist = [
 dev = [
     { name = "mypy", specifier = ">=1.17.1" },
     { name = "pre-commit", specifier = ">=3.7.0" },
+    { name = "pysentry-rs", specifier = ">=0.3.7" },
     { name = "ruff", specifier = ">=0.12.8" },
     { name = "rumdl", specifier = ">=0.0.136" },
     { name = "types-pytz", specifier = ">=2025.1.0.0" },

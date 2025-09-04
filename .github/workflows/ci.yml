@@ -24,3 +24,5 @@ jobs:
         run: uv run pytest -q --maxfail=1 --disable-warnings
       - name: Lint Markdown
         run: uv run rumdl check --disable MD013 --output-format github .
+      - name: Test for secrets
+        run: uv run pysentry-rs .
