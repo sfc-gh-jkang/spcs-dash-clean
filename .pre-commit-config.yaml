@@ -47,7 +47,12 @@ repos:
     hooks:
       - id: codespell
         args: ["--ignore-words-list=teh,ba,ot,ECT", "--skip=*.lock,*.svg,images/*,htmlcov/*"]
-
+  # Markdown formatting
+  - repo: https://github.com/rvben/rumdl-pre-commit
+    rev: v0.0.136  # Use the latest release tag
+    hooks:
+      - id: rumdl
+        args: ["--disable", "MD013","--fix"]
   # Local hooks (optional)
   - repo: local
     hooks:

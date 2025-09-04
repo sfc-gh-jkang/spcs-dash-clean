@@ -4,7 +4,7 @@ This directory contains comprehensive tests for the Snowflake Dash Analytics app
 
 ## Test Structure
 
-```
+```text
 tests/
 ├── __init__.py                 # Test package initialization
 ├── conftest.py                 # Pytest fixtures and configuration
@@ -57,6 +57,7 @@ tests/
 ## Running Tests
 
 ### All Tests
+
 ```bash
 make test
 # or
@@ -64,6 +65,7 @@ uv run pytest
 ```
 
 ### By Category
+
 ```bash
 # Unit tests only
 uv run pytest -m unit
@@ -76,6 +78,7 @@ uv run pytest -m integration
 ```
 
 ### With Coverage
+
 ```bash
 make test-coverage
 # or
@@ -83,6 +86,7 @@ uv run pytest --cov=utils --cov-report=html
 ```
 
 ### Specific Test Files
+
 ```bash
 # Run specific test file
 uv run pytest tests/test_security.py
@@ -95,6 +99,7 @@ uv run pytest tests/test_snowflake_utils.py::TestEnvironmentDetection::test_is_r
 ```
 
 ### Fast Testing Options
+
 ```bash
 # Stop on first failure
 uv run pytest -x

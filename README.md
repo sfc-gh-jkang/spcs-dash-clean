@@ -10,7 +10,7 @@ A modern Dash application designed for deployment to **Snowflake Container Servi
 - Connects to local Snowflake account accessible data
 - External access integrations to external styles and icons
 
-🔗 **Repository**: https://github.com/sfc-gh-jkang/spcs-dash-clean
+**Repository**: <https://github.com/sfc-gh-jkang/spcs-dash-clean>
 
 ## ⚡ Quick Start (5 minutes)
 
@@ -20,7 +20,7 @@ Want to try the app immediately?
 2. `cd spcs-dash-clean && cp env.template .env`
 3. Edit `.env` with your Snowflake credentials
 4. `docker-compose up --build` or `uv run app.py` to run without Docker
-5. Visit http://localhost:8000
+5. Visit <http://localhost:8000>
 6. To spin down your container run `docker-compose down`
 7. Remember that this is NOT enough commands to deploy this Dash App to Snowflake
 
@@ -77,11 +77,13 @@ You'll see:
 ### 1. Install UV Package Manager
 
 **macOS/Linux:**
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 **Windows:**
+
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
@@ -114,6 +116,7 @@ nano .env  # or your preferred editor
 ```
 
 **Required .env variables:**
+
 ```bash
 SNOWFLAKE_ACCOUNT=your_account.region
 SNOWFLAKE_USER=your_username
@@ -130,7 +133,7 @@ SNOWFLAKE_SCHEMA=PUBLIC
 uv run app.py
 ```
 
-Visit: **http://localhost:8000**
+Visit: **<http://localhost:8000>**
 
 > **Note**: Local development uses port **8000**, while SPCS uses port **8000** as well
 
@@ -157,7 +160,7 @@ cp env.template .env
 docker-compose up --build
 ```
 
-Visit: **http://localhost:8000**
+Visit: **<http://localhost:8000>**
 
 ### Docker Commands
 
@@ -249,8 +252,8 @@ DIRECTORY = ( ENABLE = true );
 Our application uses external stylesheets.
 We will need to permit our service to access these external resources. Permitting access to external resources requires two steps:
 
-* Create a NETWORK RULE which allows egress on a specified port to a domain name.
-* Create an EXTERNAL ACCESS INTEGRATION which allows access to the external resource defined in the network rule
+- Create a NETWORK RULE which allows egress on a specified port to a domain name.
+- Create an EXTERNAL ACCESS INTEGRATION which allows access to the external resource defined in the network rule
 
 Enable access to external resources with the following:
 
@@ -274,8 +277,11 @@ Enable access to external resources with the following:
     ALLOWED_NETWORK_RULES = ( fullstack_db.application.bootstrap_npm_network_rule )
     ENABLED = true;
     ```
+
 3. Create a new NETWORK RULE called `fontawesome_network_rule` in the `application` SCHEMA which will allow egress to a host
+
 `use.fontawesome.com`
+
 ```sql
 CREATE OR REPLACE NETWORK RULE fullstack_db.application.fontawesome_network_rule
     MODE = EGRESS
@@ -283,13 +289,16 @@ CREATE OR REPLACE NETWORK RULE fullstack_db.application.fontawesome_network_rule
     VALUE_LIST = ('use.fontawesome.com');
 ```
 
-4. Create an EXTERNAL ACCESS INTEGRATION called `fontawesome_external_access` which uses the fullstack_db.application.fontawesome_network_rule, and is enabled by default.
+1. Create an EXTERNAL ACCESS INTEGRATION called `fontawesome_external_access` which uses the fullstack_db.application.fontawesome_network_rule, and is enabled by default.
+
  ```sql
 CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION fontawesome_external_access
     ALLOWED_NETWORK_RULES = ( fullstack_db.application.fontawesome_network_rule )
     ENABLED = true;
 ```
-5. Grant usage
+
+1. Grant usage
+
 ```sql
 GRANT USAGE ON INTEGRATION PYPI_ACCESS TO ROLE fullstack_service_role;
 GRANT USAGE ON INTEGRATION bootstrap_npm_external_access TO ROLE fullstack_service_role;
@@ -382,14 +391,16 @@ Once the service is running:
 1. **Get the endpoint URL** from the `SHOW ENDPOINTS` command above
 2. **Visit the URL** in your browser and login
 3. **Check logs** if issues occur:
+
    ```sql
    SELECT SYSTEM$GET_SERVICE_LOGS('fullstack_db.application.dash_app_service', '0', 'dash-app', 50);
    ```
+
 4. **Verify data access** - the app should show Snowflake tables from `SNOWFLAKE_SAMPLE_DATA.TPCH_SF10`
 
 ## 🏗️ Project Structure
 
-```
+```text
 spcs-dash-clean/
 ├── app.py                    # Main Dash application with dual environment support
 ├── static/
@@ -441,7 +452,8 @@ The app automatically detects its runtime environment:
 - **SPCS**: Uses automatic service account authentication
 
 Check logs for environment detection:
-```
+
+```text
 INFO - Detected local development environment - using credential authentication
 INFO - Detected Snowpark Container Services environment - using token authentication
 ```
@@ -449,6 +461,7 @@ INFO - Detected Snowpark Container Services environment - using token authentica
 ## 🎨 Theme System & UI Architecture
 
 ### Three Professional Themes
+
 The application features a sophisticated three-theme system inspired by [Snowflake's website design](https://www.snowflake.com/en/):
 
 - **🔵 Snowflake Theme** (Default): Professional blue gradients and modern styling
@@ -468,12 +481,15 @@ The application features a sophisticated three-theme system inspired by [Snowfla
 - **Performance optimized** - CSS can be cached separately by browsers
 
 ### Health Check Enhancements
+
 The `/health` endpoint now includes comprehensive system information:
+
 ```bash
 curl -s http://localhost:8000/health | python3 -m json.tool
 ```
 
 **Response includes:**
+
 - **Status**: Application health status
 - **Timestamps**: UTC and NYC local time with automatic EST/EDT detection
 - **Timezone**: Current timezone information
@@ -504,9 +520,11 @@ curl -s http://localhost:8000/health | python3 -m json.tool
 
 ### For Large Datasets
 - **Scale warehouse** - increase size for faster queries:
+
   ```sql
   ALTER WAREHOUSE fullstack_wh SET WAREHOUSE_SIZE = 'MEDIUM';
   ```
+
 - **Enable result caching** for repeated queries (enabled by default)
 - **Use LIMIT clauses** for initial data exploration
 - **Consider clustering keys** for frequently filtered columns
@@ -527,17 +545,20 @@ For better performance, adjust the compute pool resources
 ### Common Issues
 
 **Connection Errors:**
+
 - Verify Snowflake credentials in `.env`
 - Check network connectivity
 - Ensure warehouse is running
 - Confirm access to `SNOWFLAKE_SAMPLE_DATA` database and `TPCH_SF10` schema
 
 **Docker Issues:**
+
 - Rebuild with `docker-compose up --build`
 - Check port conflicts (8000)
 - Verify environment variables
 
 **Health Check Monitoring:**
+
 ```bash
 # Check application health and library versions
 curl -f http://localhost:8000/health
@@ -549,12 +570,14 @@ curl -f http://localhost:8000/health
 *Response includes status, timestamps (UTC + NYC), and all library versions for verification.*
 
 **Package Errors:**
+
 - Update dependencies: `uv sync`
 - Clear UV cache: `uv cache clean`
 
 **Virtual Environment Sync Issues:**
 
 After updating `pyproject.toml`:
+
 ```bash
 # 1. Sync local environment
 uv sync && uv run app.py
@@ -572,6 +595,7 @@ curl localhost:8000/health | grep -A 10 "versions"
 **Fast Local Debugging:**
 
 For faster debugging of `app.py` issues without Docker overhead:
+
 ```bash
 # Run the app directly with UV (faster than docker-compose)
 uv run app.py
@@ -587,24 +611,30 @@ This approach:
 Note: Make sure you have a `.env` file with your Snowflake credentials before running locally.
 
 **SPCS Deployment Issues:**
+
 - Check service status:
+
 ```sql
 DESCRIBE SERVICE fullstack_db.application.dash_app_service;
 SHOW SERVICE CONTAINERS IN SERVICE fullstack_db.application.dash_app_service;
 SHOW ENDPOINTS IN SERVICE fullstack_db.application.dash_app_service;
 select * FROM TABLE(fullstack_db.application.dash_app_service!SPCS_GET_LOGS());
 ```
+
 - View service logs:
+
 ```sql
 SELECT value AS log_line
   FROM TABLE(
     SPLIT_TO_TABLE(SYSTEM$GET_SERVICE_LOGS('fullstack_db.application.dash_app_service', 0, 'dash-app'), '\n')
   );
 ```
+
 - Verify compute pool is running: `SHOW COMPUTE POOLS;`
 - Ensure image was pushed successfully to registry
 
 **Registry Issues:**
+
 ```bash
 # If docker push fails with authentication error:
 docker logout <account>.registry.snowflakecomputing.com
@@ -618,6 +648,7 @@ SHOW GRANTS ON IMAGE REPOSITORY fullstack_db.devops.images;
 ```
 
 **Service Creation Issues:**
+
 ```sql
 -- If service fails to start, check detailed status:
 SELECT SYSTEM$GET_SERVICE_STATUS('fullstack_db.application.dash_app_service');
@@ -650,6 +681,7 @@ SELECT value AS log_line
   );
 
 ```
+
 ### Debug Mode
 
 ```bash
@@ -665,6 +697,7 @@ docker-compose run --rm spcs-dash-app /bin/bash
 ### Complete Development Cycle
 
 1. **Setup Development Environment**
+
    ```bash
    git clone https://github.com/sfc-gh-jkang/spcs-dash-clean.git
    cd spcs-dash-clean
@@ -674,18 +707,21 @@ docker-compose run --rm spcs-dash-app /bin/bash
    ```
 
 2. **Local Development**
+
    ```bash
    uv run app.py                    # Test on http://localhost:8000
    uv run ruff check --fix          # Lint and format code
    ```
 
 3. **Docker Testing**
+
    ```bash
    docker-compose up --build        # Test on http://localhost:8000
    docker-compose logs -f           # Monitor logs
    ```
 
 4. **Prepare for Production**
+
    ```bash
    # Build production image
    docker build --platform linux/amd64 -t spcs-dash-app:latest .
@@ -695,6 +731,7 @@ docker-compose run --rm spcs-dash-app /bin/bash
    ```
 
 5. **Deploy to SPCS**
+
    ```bash
    # Authentication and deployment
    docker login <account>.registry.snowflakecomputing.com
@@ -703,6 +740,7 @@ docker-compose run --rm spcs-dash-app /bin/bash
    ```
 
 6. **Monitor Production**
+
    ```sql
    -- Check service health
    SELECT SYSTEM$GET_SERVICE_STATUS('fullstack_db.application.dash_app_service');
@@ -719,7 +757,7 @@ This project includes a comprehensive test suite with **enterprise-grade securit
 
 The test suite is organized into multiple categories:
 
-```
+```text
 tests/
 ├── test_snowflake_utils.py       # Unit tests for core functions
 ├── test_security.py              # Comprehensive security validation tests
@@ -762,6 +800,7 @@ uv run pytest tests/test_snowflake_utils.py -v
 ```
 
 #### **2. Security Tests** (`test_security.py`)
+
 Enterprise-grade security validation within a suite of 309 total tests and 100% coverage:
 
 - 🛡️ **SQL Injection Prevention**: Classic, blind, polyglot, second-order attacks
@@ -806,6 +845,7 @@ uv run pytest tests/test_integration.py -v
 ### 🎯 Test Execution Examples
 
 #### **Run All Tests**
+
 ```bash
 # Full test suite (recommended)
 uv run pytest tests/ -v
@@ -818,6 +858,7 @@ uv run pytest tests/ --cov=utils --cov=pages --cov=components --cov-report=html
 ```
 
 #### **Security-Focused Testing**
+
 ```bash
 # All security tests (comprehensive validation)
 uv run pytest tests/test_security.py tests/test_security_stress.py -v
@@ -829,6 +870,7 @@ uv run pytest tests/test_security.py::TestDataExfiltrationPrevention -v
 ```
 
 #### **Performance & Stress Testing**
+
 ```bash
 # Stress tests only
 uv run pytest tests/test_security_stress.py -v --tb=short
@@ -838,6 +880,7 @@ uv run pytest -m "security or stress" -v
 ```
 
 #### **Test Filtering & Markers**
+
 ```bash
 # Run by test markers
 uv run pytest -m unit -v           # Unit tests only
@@ -854,7 +897,7 @@ uv run pytest -k "not concurrent" -v
 
 ### 📈 Test Results Summary
 
-```
+```text
 ✅ 47 passed, 1 skipped, 2 deselected    # Main security test suite (excluding concurrent tests)
 ✅ Core functionality tests available    # Unit tests for snowflake_utils
 ✅ Integration tests available           # End-to-end workflows
@@ -868,6 +911,7 @@ uv run pytest -k "not concurrent" -v
 ### 🔧 Test Configuration
 
 #### **pytest.ini Configuration**
+
 ```toml
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -885,6 +929,7 @@ markers = [
 ```
 
 #### **Running Tests in Development**
+
 ```bash
 # Watch mode (re-run on file changes)
 uv run pytest-watch tests/
@@ -904,24 +949,28 @@ uv run pytest tests/ --lf
 #### **Common Issues**
 
 1. **Rate Limiting Test Flaky**
+
    ```bash
    # Run rate limiting test in isolation (always works)
    uv run pytest tests/test_security.py::TestSecurityLogging::test_rate_limit_violation_logging -v
    ```
 
 2. **Snowflake Connection Tests**
+
    ```bash
    # Skip tests requiring Snowflake connection
    uv run pytest tests/ -k "not snowflake_connection"
    ```
 
 3. **Slow Test Execution**
+
    ```bash
    # Run only fast tests
    uv run pytest tests/ -m "not slow" -q
    ```
 
 #### **Test Environment Setup**
+
 ```bash
 # Ensure all test dependencies are installed
 uv sync --group test
@@ -970,29 +1019,35 @@ For automated testing in CI/CD pipelines:
 7. Submit a pull request
 
 **Required for all contributions:**
+
 - ✅ All tests must pass (see [Testing](#-testing) section)
 - ✅ Security validation must pass
 - ✅ Code must be properly linted
 - ✅ New features should include appropriate tests
 
-# For development
+## For development
 - to push to gitlab:
-```
+
+```text
 git add .
 git commit -m 'add message'
 git push gitlab-origin main
 ```
+
 - to push to github:
-```
+
+```text
 git add .
 git commit -m 'add message'
 git push origin main
 ```
 
-- To skip entro-secret-scan when it has a false positive: https://snowflakecomputing.atlassian.net/wiki/spaces/CITS/pages/4570218497/Entro+Security+Pre-commit+hook+setup+guide
+- To skip entro-secret-scan when it has a false positive: <https://snowflakecomputing.atlassian.net/wiki/spaces/CITS/pages/4570218497/Entro+Security+Pre-commit+hook+setup+guide>
+
 How and when to bypass the pre-commit hook:
 Like any other secret detection tool, Entro is not completely perfect tool and sometimes detects non-secret key words as secrets or invalid secrets as actual secrets. In these scenarios, developers will need to bypass the pre-commit hook first and then ignore the secret leak incident in the Entro portal. Command to bypass the Entro pre-commit hook:
-```
+
+```text
 SKIP=entro-secret-scan git commit -m "commit message"
 ```
 
@@ -1002,6 +1057,6 @@ This project is licensed under the Apache License, Version 2.0. See the `LICENSE
 
 ## 🔗 Links
 
-- **Repository**: https://github.com/sfc-gh-jkang/spcs-dash-clean
+- **Repository**: <https://github.com/sfc-gh-jkang/spcs-dash-clean>
 - **Snowflake Container Services**: [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services)
 - **Dash Framework**: [Documentation](https://dash.plotly.com/)

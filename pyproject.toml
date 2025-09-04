@@ -27,6 +27,7 @@ dev = [
     "pre-commit>=3.7.0",
     "types-pytz>=2025.1.0.0",
     "mypy>=1.17.1",
+    "rumdl>=0.0.136",
 ]
 test = [
     "pytest>=8.0.0",

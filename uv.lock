@@ -1582,6 +1582,21 @@ wheels = [
 ]
 
 [[package]]
+name = "rumdl"
+version = "0.0.136"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/07/22/df818d5eb37ca1823e5ae7a7e8911ec78bb74db5e9ad56d4b8702abc1024/rumdl-0.0.136.tar.gz", hash = "sha256:c937039076e69545f98f24d0c1280eaf8f907729e168442907bc9683385d293d", size = 988420, upload-time = "2025-09-03T18:39:09.925Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/99/97/717e2015d911abbb2c3017eddf8bb208b462d62e54b7149d5c29e21bdf27/rumdl-0.0.136-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:8530698d7bc51049f8e5dd1548c75bec2dedfc832039df7e901c6a191ba928c4", size = 2545073, upload-time = "2025-09-03T18:39:03.417Z" },
+    { url = "https://files.pythonhosted.org/packages/c7/9c/083da92afae4c02c4afa10246c884f90c9b991ebb4ee7b5593cc6bcc0b68/rumdl-0.0.136-py3-none-macosx_11_0_arm64.whl", hash = "sha256:aecd546e64b90fcedcb1f677a0cfac95daf2dcf6e0e874df449ddf5b1c9a61d7", size = 2443955, upload-time = "2025-09-03T18:38:57.58Z" },
+    { url = "https://files.pythonhosted.org/packages/e7/3a/2925ec5e1f9788476191af88fd57b70448f9be341491e23997a74a8aec28/rumdl-0.0.136-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:68f123d4287fced2797d6fa6b293cb6862c14a9adee7069c58eaa0316cb3a9c8", size = 2682319, upload-time = "2025-09-03T18:38:59.464Z" },
+    { url = "https://files.pythonhosted.org/packages/9f/6b/86d1b6d23126a41e0c4b558f29ab17407c58611a7635b44f36e3f2dcda8c/rumdl-0.0.136-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d05ef712a0fe053b62117c533bdef2eef2f35ee135169d120664f3390cb34c81", size = 2770858, upload-time = "2025-09-03T18:39:06.045Z" },
+    { url = "https://files.pythonhosted.org/packages/da/b4/4c5d789abfc9cfecb5191622264357d56c53711d6b9cde1eab049c43fa5f/rumdl-0.0.136-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:5771946eb3a5f8b504a8c69b7fb80252c1be86b2721d0fd0fcba68d115eeb1df", size = 2677025, upload-time = "2025-09-03T18:39:01.542Z" },
+    { url = "https://files.pythonhosted.org/packages/48/d8/a754eab26544236e26c437ce71d7c0eb397467e22605a00b3e0ed12c9f23/rumdl-0.0.136-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:dbe037e08522d17f1fc8dc68bd28e33c36f618a8a0e52458f71b677fe8a8c8c0", size = 2761777, upload-time = "2025-09-03T18:39:08.23Z" },
+    { url = "https://files.pythonhosted.org/packages/10/bb/11802f142067578ec107a68eb175b03518eb73fe3493ec2eb576dfcd79fa/rumdl-0.0.136-py3-none-win_amd64.whl", hash = "sha256:7f0733be77468c66a127241f3d4fa0973d3faa4bff6783d556d36d7093ac0014", size = 2635229, upload-time = "2025-09-03T18:39:04.739Z" },
+]
+
+[[package]]
 name = "s3transfer"
 version = "0.13.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1771,6 +1786,7 @@ dev = [
     { name = "mypy" },
     { name = "pre-commit" },
     { name = "ruff" },
+    { name = "rumdl" },
     { name = "types-pytz" },
 ]
 test = [
@@ -1798,6 +1814,7 @@ dev = [
     { name = "mypy", specifier = ">=1.17.1" },
     { name = "pre-commit", specifier = ">=3.7.0" },
     { name = "ruff", specifier = ">=0.12.8" },
+    { name = "rumdl", specifier = ">=0.0.136" },
     { name = "types-pytz", specifier = ">=2025.1.0.0" },
 ]
 test = [
