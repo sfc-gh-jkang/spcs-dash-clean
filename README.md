@@ -2,6 +2,8 @@
 
 ![SPCS Dash App Screenshot](images/spcs_dash_app_screenshot.png)
 
+Simple change
+
 A modern Dash application designed for deployment to **Snowflake Container Services (SPCS)** with full local development support. Features interactive data visualization, Snowflake integration, and a responsive UI with dark/light mode support.
 
 **Key capabilities:**
