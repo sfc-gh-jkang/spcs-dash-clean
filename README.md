@@ -1060,3 +1060,10 @@ This project is licensed under the Apache License, Version 2.0. See the `LICENSE
 - **Repository**: <https://github.com/sfc-gh-jkang/spcs-dash-clean>
 - **Snowflake Container Services**: [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services)
 - **Dash Framework**: [Documentation](https://dash.plotly.com/)
+
+## Repository Owner
+
+- **Owner:** John Kang (john.kang@snowflake.com / [@sfc-gh-jkang](https://github.com/sfc-gh-jkang))
+- **Access requests:** Open a [CASEC Jira](https://snowflakecomputing.atlassian.net/) for access changes
+- **License:** Apache-2.0
+
